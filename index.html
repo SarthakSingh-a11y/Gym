@@ -800,41 +800,24 @@
       font-weight:700;cursor:pointer;transition:all var(--tr);margin-top:6px;
     }
     .bp-edit-btn:active{background:rgba(0,229,195,.08)}
-    .bp-override-row{
-      display:flex;align-items:center;justify-content:space-between;
-      margin-top:12px;padding-top:12px;border-top:1px solid var(--border);gap:10px;
-    }
-    .bp-override-label{font-size:13px;font-weight:600}
-    .bp-override-hint{font-size:11px;color:var(--muted);margin-top:1px}
-    .bp-override-fields{
-      overflow:hidden;max-height:0;
-      transition:max-height .3s ease,opacity .3s ease,padding .3s ease;
-      opacity:0;display:flex;flex-direction:column;gap:10px;
-    }
-    .bp-override-fields.open{max-height:360px;opacity:1;padding-top:12px}
-    .bp-override-input-group{display:flex;flex-direction:column;gap:6px}
-    .bp-override-input-label{font-size:12px;font-weight:600;color:var(--text)}
-    .bp-override-input-row{display:flex;align-items:center;gap:8px}
-    .bp-override-input{
+    .bp-goals-section{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px}
+    .bp-goal-group{display:flex;flex-direction:column;gap:6px}
+    .bp-goal-label{font-size:12px;font-weight:600;color:var(--text)}
+    .bp-goal-input-row{display:flex;align-items:center;gap:8px}
+    .bp-goal-input{
       flex:1;background:rgba(255,255,255,.05);border:1.5px solid var(--border);
       border-radius:10px;padding:12px 14px;color:var(--text);
       font-size:18px;font-family:var(--font);font-weight:700;
       outline:none;transition:border-color var(--tr);
     }
-    .bp-override-input:focus{border-color:var(--mint)}
-    .bp-override-unit{font-size:13px;color:var(--muted);font-weight:600;flex-shrink:0;width:36px}
-    .bp-formula-hint{font-size:11px;color:var(--muted);text-align:center;line-height:1.5;padding:0 4px}
-    .bp-save-override-btn{
+    .bp-goal-input:focus{border-color:var(--mint)}
+    .bp-goal-unit{font-size:13px;color:var(--muted);font-weight:600;flex-shrink:0;width:36px}
+    .bp-save-goals-btn{
       width:100%;padding:13px;background:linear-gradient(135deg,var(--mint),var(--blue));
       border:none;border-radius:var(--radius-sm);color:#0B0C14;font-size:14px;
       font-family:var(--font);font-weight:800;cursor:pointer;transition:all var(--tr);
     }
-    .bp-save-override-btn:active{transform:scale(.97)}
-    .bp-custom-badge{
-      display:inline-block;padding:1px 7px;border-radius:20px;
-      font-size:10px;font-weight:700;background:rgba(255,107,53,.18);
-      color:var(--orange);margin-left:6px;vertical-align:middle;
-    }
+    .bp-save-goals-btn:active{transform:scale(.97)}
     .bp-no-profile{text-align:center;padding:20px 16px;color:var(--muted);font-size:13px;line-height:1.6}
 
     /* ── UTILITIES ── */
@@ -1439,12 +1422,8 @@ function getSettings(){
   const merged={...DEFAULT_SETTINGS,...s,enabledTrackers:{...DEFAULT_SETTINGS.enabledTrackers,...(s.enabledTrackers||{})}};
   const profile=getBodyProfile();
   if(profile){
-    merged.calorieGoal=profile.manualOverride
-      ?(profile.manualCalories||profile.calorieGoal||2000)
-      :(profile.calorieGoal||2000);
-    merged.proteinGoal=profile.manualOverride
-      ?(profile.manualProtein||profile.proteinGoal||150)
-      :(profile.proteinGoal||150);
+    merged.calorieGoal=profile.manualCalories||profile.calorieGoal||2000;
+    merged.proteinGoal=profile.manualProtein||profile.proteinGoal||150;
   }
   return merged;
 }
@@ -2302,10 +2281,8 @@ function renderBodyProfileSection(){
   }
   const formulaCal=profile.calorieGoal||2000;
   const formulaPro=profile.proteinGoal||150;
-  const effectiveCal=profile.manualOverride?(profile.manualCalories||formulaCal):formulaCal;
-  const effectivePro=profile.manualOverride?(profile.manualProtein||formulaPro):formulaPro;
-  const isCustom=profile.manualOverride&&(profile.manualCalories||profile.manualProtein);
-  const customBadge=isCustom?`<span class="bp-custom-badge">✏️ Custom</span>`:'';
+  const activeCal=profile.manualCalories||formulaCal;
+  const activePro=profile.manualProtein||formulaPro;
   const wu=profile.weight?`${profile.weight} ${profile.weightUnit}`:'—';
   const hu=profile.height?`${profile.height} ${profile.heightUnit}`:'—';
 
@@ -2321,63 +2298,33 @@ function renderBodyProfileSection(){
       <span class="bp-badge">${GOAL_LABELS[profile.goal]||profile.goal}</span>
     </div>
     <div class="bp-targets">
-      <div class="bp-targets-label">${isCustom?'Custom Targets':'Calculated Targets'}</div>
-      <div class="bp-targets-val">${effectiveCal.toLocaleString()} kcal · ${effectivePro}g protein${customBadge}</div>
+      <div class="bp-targets-label">Calculated Targets</div>
+      <div class="bp-targets-val">${formulaCal.toLocaleString()} kcal · ${formulaPro}g protein</div>
     </div>
     <button class="bp-edit-btn" onclick="document.getElementById('onboarding').classList.remove('hidden');obGoStep(1)">✏️ Edit Profile</button>
-    <div class="bp-override-row">
-      <div>
-        <div class="bp-override-label">Override Manually</div>
-        <div class="bp-override-hint">Set custom calorie &amp; protein goals</div>
-      </div>
-      <label class="toggle-switch">
-        <input type="checkbox" id="bp-override-toggle" ${profile.manualOverride?'checked':''}/>
-        <span class="toggle-slider"></span>
-      </label>
-    </div>
-    <div class="bp-override-fields ${profile.manualOverride?'open':''}" id="bp-override-fields">
-      <div class="bp-override-input-group">
-        <div class="bp-override-input-label">🔥 Daily Calories</div>
-        <div class="bp-override-input-row">
-          <input class="bp-override-input" id="bp-manual-cal" type="number" inputmode="numeric"
-            step="1" placeholder="${formulaCal}" value="${profile.manualCalories||formulaCal}"/>
-          <span class="bp-override-unit">kcal</span>
+    <div class="bp-goals-section">
+      <div class="bp-goal-group">
+        <div class="bp-goal-label">🔥 Calorie Goal (kcal/day)</div>
+        <div class="bp-goal-input-row">
+          <input class="bp-goal-input" id="bp-manual-cal" type="number" inputmode="numeric"
+            step="1" value="${activeCal}"/>
+          <span class="bp-goal-unit">kcal</span>
         </div>
       </div>
-      <div class="bp-override-input-group">
-        <div class="bp-override-input-label">🥩 Daily Protein</div>
-        <div class="bp-override-input-row">
-          <input class="bp-override-input" id="bp-manual-pro" type="number" inputmode="numeric"
-            step="1" placeholder="${formulaPro}" value="${profile.manualProtein||formulaPro}"/>
-          <span class="bp-override-unit">g</span>
+      <div class="bp-goal-group">
+        <div class="bp-goal-label">🥩 Protein Goal (g/day)</div>
+        <div class="bp-goal-input-row">
+          <input class="bp-goal-input" id="bp-manual-pro" type="number" inputmode="numeric"
+            step="1" value="${activePro}"/>
+          <span class="bp-goal-unit">g</span>
         </div>
       </div>
-      <div class="bp-formula-hint">Formula suggests: ${formulaCal.toLocaleString()} kcal · ${formulaPro}g protein</div>
-      <button class="bp-save-override-btn" onclick="saveBpOverride()">Save Custom Goals</button>
+      <button class="bp-save-goals-btn" onclick="saveBpGoals()">Save Goals</button>
     </div>
   </div>`;
-
-  document.getElementById('bp-override-toggle').addEventListener('change',function(){
-    const p=getBodyProfile()||{};
-    p.manualOverride=this.checked;
-    if(!this.checked){
-      p.manualCalories=null;
-      p.manualProtein=null;
-    }
-    saveBodyProfile(p);
-    const fieldsEl=document.getElementById('bp-override-fields');
-    fieldsEl.classList.toggle('open',this.checked);
-    // Update targets card label + badge live (re-render section after animation)
-    setTimeout(()=>{
-      settings=getSettings();
-      renderBodyProfileSection();
-      renderMeals();renderScore();renderDiscCards();
-    },this.checked?0:310);
-    if(!this.checked)showToast('↩️','Reverted to calculated goals');
-  });
 }
 
-function saveBpOverride(){
+function saveBpGoals(){
   const p=getBodyProfile()||{};
   const cal=parseInt(document.getElementById('bp-manual-cal').value);
   const pro=parseInt(document.getElementById('bp-manual-pro').value);
@@ -2385,12 +2332,11 @@ function saveBpOverride(){
   if(!pro||pro<=0){document.getElementById('bp-manual-pro').focus();return;}
   p.manualCalories=cal;
   p.manualProtein=pro;
-  p.manualOverride=true;
   saveBodyProfile(p);
   settings=getSettings();
   renderBodyProfileSection();
   renderMeals();renderScore();renderDiscCards();
-  showToast('✓','Custom goals saved');
+  showToast('✓','Goals updated');
 }
 
 // ── MEAL SHEET ──────────────────────────────────────────────────────
