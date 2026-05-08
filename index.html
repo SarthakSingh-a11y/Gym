@@ -269,8 +269,13 @@
     .wk-split-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
     .wk-split-info{}
     .wk-split-label{font-size:15px;font-weight:800}
-    .wk-split-day{font-size:11px;color:var(--muted);margin-top:1px}
     .wk-edit-split-btn{padding:6px 12px;border:1.5px solid rgba(168,85,247,.5);border-radius:8px;background:rgba(124,58,237,.08);color:var(--gym-b);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all var(--tr)}
+    .wk-picker-title{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:10px}
+    .wk-preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+    .wk-preset-card{padding:14px 12px;border-radius:var(--radius-sm);border:2px solid var(--border);background:rgba(255,255,255,.03);cursor:pointer;transition:all var(--tr);display:flex;flex-direction:column;gap:5px;min-height:76px}
+    .wk-preset-card:active{transform:scale(.95)}
+    .wk-preset-emoji{font-size:22px;line-height:1}
+    .wk-preset-name{font-size:13px;font-weight:800;line-height:1.3;color:var(--text)}
     .wk-ex-list{}
     .wk-ex-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity var(--tr)}
     .wk-ex-row:last-of-type{border-bottom:none}
@@ -1431,7 +1436,6 @@
     <div class="wo-topbar">
       <button class="wo-back-btn" onclick="closeWorkoutOverlay()">←</button>
       <div class="wo-topbar-title">Today's Workout</div>
-      <button class="wo-topbar-action" onclick="openSplitManager()">Split ✏️</button>
     </div>
     <div class="wo-body" id="wo-body"></div>
   </div>
@@ -1521,7 +1525,12 @@ function getWorkoutLog(date){return JSON.parse(localStorage.getItem('workout_log
 function saveWorkoutLog(date,log){localStorage.setItem('workout_log_'+date,JSON.stringify(log))}
 function getExerciseHistory(){return JSON.parse(localStorage.getItem('exercise_history')||'{}')}
 function saveExerciseHistory(h){localStorage.setItem('exercise_history',JSON.stringify(h))}
-function getTodaySplit(){const split=getWeeklySplit();const dow=DAYS_LC[new Date().getDay()];return split[dow]||[]}
+function getTodaySplit(){return state?.workoutSplit||[]}
+function getDaySplit(dateStr){
+  const today=new Date().toISOString().slice(0,10);
+  if(dateStr===today)return state?.workoutSplit||[];
+  return getDay('discipline_'+dateStr).workoutSplit||[];
+}
 
 const MUSCLE_COLORS={Chest:'#FF6B35',Back:'#3B82F6',Shoulders:'#8B5CF6',Bicep:'#00E5C3',Tricep:'#A855F7',Legs:'#10B981',Rest:'#64748B'};
 const MUSCLE_EMOJIS={Chest:'🏋️',Back:'🔱',Shoulders:'💪',Bicep:'💪',Tricep:'🦾',Legs:'🦵',Rest:'😴'};
@@ -1682,7 +1691,7 @@ function saveSettings(s){localStorage.setItem('dos_settings',JSON.stringify(s))}
 const todayKey=()=>`discipline_${new Date().toISOString().slice(0,10)}`;
 function getDay(key){
   const defaults={
-    meals:{checked:[]},workout:{done:false,type:null},steps:0,
+    meals:{checked:[]},workout:{done:false,type:null},workoutSplit:null,steps:0,
     water:{filled:[]},sleep:{hours:0,bedtime:'',waketime:''},
     focus:{journal:false,noscroll:false,meditation:false,mood:0},
     date:key.replace('discipline_',''),
@@ -1693,6 +1702,7 @@ function getDay(key){
   const p=JSON.parse(stored);
   return{
     ...defaults,...p,
+    workoutSplit:Array.isArray(p.workoutSplit)?p.workoutSplit:null,
     meals:{checked:Array.isArray(p.meals?.checked)?p.meals.checked:[]},
     water:p.water||defaults.water,
     sleep:{...defaults.sleep,...(p.sleep||{})},
@@ -2004,10 +2014,9 @@ function updateMealsCard(){
 // ── GYM SCORE ───────────────────────────────────────────────────────
 function calcGymScore(dateStr){
   if(!dateStr)return 0;
-  const split=getWeeklySplit();
-  const dow=DAYS_LC[new Date(dateStr+'T12:00:00').getDay()];
-  const daySplit=split[dow]||[];
-  if(daySplit.includes('Rest'))return 1;
+  const daySplit=getDaySplit(dateStr);
+  if(daySplit.includes('Rest'))return 1; // Rest day = full score
+  if(!daySplit.length)return 0;          // No split picked = no score
   const log=getWorkoutLog(dateStr);
   if(!log.exercises||!log.exercises.length)return 0;
   const doneCount=log.exercises.filter(e=>e.sets&&e.sets.some(s=>s.done)).length;
@@ -2015,6 +2024,18 @@ function calcGymScore(dateStr){
 }
 
 // ── WORKOUT HOME CARD ────────────────────────────────────────────────
+function selectTodaySplit(muscles){
+  state.workoutSplit=muscles;
+  saveDay(todayKey(),state);
+  renderWorkout();renderScore();renderDiscCards();
+  if(muscles.includes('Rest'))celebrate('😴','Rest Day Logged!','Recovery is part of the process.');
+}
+function changeTodaySplit(){
+  state.workoutSplit=null;
+  saveDay(todayKey(),state);
+  renderWorkout();renderScore();renderDiscCards();
+}
+
 function renderWorkout(){
   const todaySplit=getTodaySplit();
   const dateStr=new Date().toISOString().slice(0,10);
@@ -2022,34 +2043,52 @@ function renderWorkout(){
   const inner=document.getElementById('workout-card-inner');
   const sub=document.getElementById('gym-sub');
   const card=document.getElementById('workout-card');
+  const hasSplit=todaySplit.length>0;
   const isRest=todaySplit.includes('Rest');
-  const splitName=todaySplit.filter(m=>m!=='Rest').length?todaySplit.filter(m=>m!=='Rest').join(' + '):'No split set';
-  const dayName=DAY_LABELS[new Date().getDay()];
   const doneExCount=log.exercises.filter(e=>e.sets&&e.sets.some(s=>s.done)).length;
   const totalVol=log.totalVolume||0;
   const gymScore=calcGymScore(dateStr);
   const isDone=gymScore>=1;
-  sub.textContent=isRest?'Rest Day':isDone?'Done ✓':`${doneExCount}/${log.exercises.length} logged`;
+
+  sub.textContent=!hasSplit?'Pick a split':isRest?'Rest Day ✓':isDone?'Done ✓':`${doneExCount}/${log.exercises.length} logged`;
   card.classList.toggle('complete',isDone);
 
-  if(isRest){
+  // ── No split selected — show preset picker ──
+  if(!hasSplit){
+    const PRESET_COLORS=['#FF6B35','#3B82F6','#10B981','#64748B'];
+    const presetCards=SPLIT_PRESETS.map((p,i)=>
+      `<div class="wk-preset-card" style="border-color:${PRESET_COLORS[i]}55" onclick="selectTodaySplit(${JSON.stringify(p.muscles)})">
+        <div class="wk-preset-emoji">${p.emoji}</div>
+        <div class="wk-preset-name">${p.name}</div>
+      </div>`
+    ).join('');
     inner.innerHTML=`
-      <div class="wo-rest-day">
-        <div class="wo-rest-emoji">😴</div>
-        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Rest Day</div>
-        <div style="font-size:13px;color:var(--muted)">Recovery is part of the process.</div>
-        <button class="wk-edit-split-btn" style="margin-top:16px" onclick="openSplitManager()">✏️ Edit Split</button>
-      </div>`;
+      <div class="wk-picker-title">What's today's workout?</div>
+      <div class="wk-preset-grid">${presetCards}</div>`;
     renderStreak();return;
   }
 
-  // Show up to 3 exercises from today's log
+  // ── Rest day ──
+  if(isRest){
+    inner.innerHTML=`
+      <div class="wk-split-bar">
+        <div class="wk-split-info"><div class="wk-split-label">😴 Rest Day</div></div>
+        <button class="wk-edit-split-btn" onclick="changeTodaySplit()">✏️ Change</button>
+      </div>
+      <div style="padding:16px 0 8px;text-align:center;color:var(--muted);font-size:13px">Recovery is progress. Rest well 💤</div>`;
+    renderStreak();return;
+  }
+
+  // ── Split selected — show exercises + stats ──
+  const preset=SPLIT_PRESETS.find(p=>JSON.stringify([...p.muscles].sort())===JSON.stringify([...todaySplit].sort()));
+  const splitEmoji=preset?.emoji||'💪';
+  const splitName=todaySplit.join(' + ');
   const preview=log.exercises.slice(0,3);
   const exHTML=preview.length?preview.map(e=>{
     const ex=getExById(e.id);
     const col=MUSCLE_COLORS[ex.muscle]||'#8B5CF6';
     const doneSets=e.sets.filter(s=>s.done).length;
-    const maxKg=e.sets.filter(s=>s.done&&s.kg).reduce((m,s)=>Math.max(m,s.kg),0);
+    const maxKg=e.sets.filter(s=>s.done&&s.kg).reduce((m,s)=>Math.max(m,+s.kg),0);
     const lastStr=doneSets?`${doneSets} sets${maxKg?' · '+maxKg+'kg':''}`:'Tap to log';
     return `<div class="wk-ex-row" onclick="openSetLogger('${e.id}')">
       <div class="wk-ex-thumb" style="background:${col}22">${ex.emoji}</div>
@@ -2064,10 +2103,9 @@ function renderWorkout(){
   inner.innerHTML=`
     <div class="wk-split-bar">
       <div class="wk-split-info">
-        <div class="wk-split-label">💪 ${splitName}</div>
-        <div class="wk-split-day">${dayName}'s session</div>
+        <div class="wk-split-label">${splitEmoji} ${splitName}</div>
       </div>
-      <button class="wk-edit-split-btn" onclick="openSplitManager()">✏️ Split</button>
+      <button class="wk-edit-split-btn" onclick="changeTodaySplit()">✏️ Change</button>
     </div>
     <div class="wk-ex-list">${exHTML}</div>
     <div class="wk-stats-bar">
@@ -2127,7 +2165,9 @@ function renderWorkoutOverlay(){
   const log=getWorkoutLog(dateStr);
   const todaySplit=getTodaySplit();
   const isRest=todaySplit.includes('Rest');
-  const splitName=todaySplit.length?todaySplit.join(' + '):'Not set';
+  const splitName=todaySplit.filter(m=>m!=='Rest').join(' + ')||'Today';
+  const preset=SPLIT_PRESETS.find(p=>JSON.stringify([...p.muscles].sort())===JSON.stringify([...todaySplit].sort()));
+  const splitEmoji=preset?.emoji||'💪';
   const doneCount=log.exercises.filter(e=>e.sets&&e.sets.some(s=>s.done)).length;
   const totalVol=log.totalVolume||0;
   const body=document.getElementById('wo-body');
@@ -2141,7 +2181,7 @@ function renderWorkoutOverlay(){
     const ex=getExById(e.id);
     const col=MUSCLE_COLORS[ex.muscle]||'#8B5CF6';
     const doneSets=e.sets.filter(s=>s.done).length;
-    const maxKg=e.sets.filter(s=>s.done&&s.kg).reduce((m,s)=>Math.max(m,s.kg),0);
+    const maxKg=e.sets.filter(s=>s.done&&s.kg).reduce((m,s)=>Math.max(m,+s.kg),0);
     const vol=e.totalVolume||0;
     const isLogged=doneSets>0;
     return `<div class="wol-ex-row ${isLogged?'logged':''}" onclick="openSetLogger('${e.id}')">
@@ -2156,8 +2196,8 @@ function renderWorkoutOverlay(){
 
   body.innerHTML=`
     <div class="wo-split-header">
-      <div class="wo-split-emoji">${todaySplit.map(m=>MUSCLE_EMOJIS[m]||'💪').join('')}</div>
-      <div><div class="wo-split-hname">${splitName}</div><div class="wo-split-hsub">${DAY_LABELS[new Date().getDay()]}'s Session</div></div>
+      <div class="wo-split-emoji">${splitEmoji}</div>
+      <div><div class="wo-split-hname">${splitName}</div><div class="wo-split-hsub">Today's Session</div></div>
     </div>
     <div class="wo-stats-bar">
       <div class="wo-stat-item"><div class="wo-sv">${totalVol>=1000?(totalVol/1000).toFixed(1)+'k':totalVol}<small style="font-size:11px;font-weight:600"> kg</small></div><div class="wo-sl">Volume</div></div>
