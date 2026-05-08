@@ -348,12 +348,15 @@
     .day-editor-sheet.hidden{transform:translate(-50%,100%)}
     .day-editor-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:299}
     .day-editor-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 0}
-    .day-editor-title{font-size:17px;font-weight:800;padding:14px 16px 4px}
-    .muscle-pills-grid{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px 16px}
-    .muscle-pill{padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--tr);font-family:var(--font)}
-    .muscle-pill.sel{border-color:var(--gym-b);background:rgba(124,58,237,.15);color:var(--text)}
-    .muscle-pill:active{transform:scale(.95)}
-    .day-save-btn{width:calc(100% - 32px);margin:0 16px 16px;padding:13px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--gym-a),var(--gym-b));color:#fff;font-size:14px;font-family:var(--font);font-weight:800;cursor:pointer}
+    .day-editor-title{font-size:17px;font-weight:800;padding:14px 16px 8px}
+    .split-presets-grid{display:flex;flex-direction:column;gap:8px;padding:0 16px 20px}
+    .split-preset-card{padding:14px;border-radius:var(--radius-sm);border:2px solid var(--border);background:rgba(255,255,255,.03);cursor:pointer;transition:all var(--tr)}
+    .split-preset-card.sel{border-color:var(--gym-b);background:rgba(124,58,237,.1)}
+    .split-preset-card:active{transform:scale(.98)}
+    .spc-header{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+    .spc-emoji{font-size:22px;line-height:1}
+    .spc-name{font-size:15px;font-weight:800}
+    .spc-exercises{font-size:11px;color:var(--muted);line-height:1.6}
     /* Exercise Picker */
     .ex-search-input{width:100%;padding:12px 14px;background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:var(--font);outline:none;margin-bottom:10px}
     .ex-search-input::placeholder{color:var(--muted)}
@@ -1465,8 +1468,7 @@
   <div id="day-editor-sheet" class="day-editor-sheet hidden">
     <div class="day-editor-handle"></div>
     <div class="day-editor-title" id="day-editor-title">Monday</div>
-    <div class="muscle-pills-grid" id="muscle-pills-grid"></div>
-    <button class="day-save-btn" onclick="saveDayEditor()">Save Day</button>
+    <div class="split-presets-grid" id="split-presets-grid"></div>
   </div>
 
   <nav id="bottom-nav">
@@ -1512,7 +1514,7 @@ function saveMealsList(list){localStorage.setItem('meals_list',JSON.stringify(li
 // ── WORKOUT DATA ─────────────────────────────────────────────────────
 const DAYS_LC=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
 const DAY_LABELS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const DEFAULT_SPLIT={monday:['Chest','Tricep'],tuesday:['Back','Bicep'],wednesday:['Legs'],thursday:['Shoulders','Core'],friday:['Chest','Tricep'],saturday:['Cardio'],sunday:['Rest']};
+const DEFAULT_SPLIT={monday:['Chest','Tricep'],tuesday:['Back','Bicep'],wednesday:['Legs','Shoulders'],thursday:['Chest','Tricep'],friday:['Back','Bicep'],saturday:['Legs','Shoulders'],sunday:['Rest']};
 function getWeeklySplit(){return JSON.parse(localStorage.getItem('weekly_split')||'null')||DEFAULT_SPLIT}
 function saveWeeklySplit(s){localStorage.setItem('weekly_split',JSON.stringify(s))}
 function getWorkoutLog(date){return JSON.parse(localStorage.getItem('workout_log_'+date)||'null')||{split:[],exercises:[],totalVolume:0}}
@@ -1521,65 +1523,81 @@ function getExerciseHistory(){return JSON.parse(localStorage.getItem('exercise_h
 function saveExerciseHistory(h){localStorage.setItem('exercise_history',JSON.stringify(h))}
 function getTodaySplit(){const split=getWeeklySplit();const dow=DAYS_LC[new Date().getDay()];return split[dow]||[]}
 
-const MUSCLE_COLORS={Chest:'#FF6B35',Back:'#3B82F6',Shoulders:'#8B5CF6',Bicep:'#00E5C3',Tricep:'#A855F7',Legs:'#10B981',Glutes:'#F43F5E',Core:'#F59E0B',Cardio:'#EF4444',Rest:'#64748B'};
-const MUSCLE_EMOJIS={Chest:'🏋️',Back:'🔱',Shoulders:'💪',Bicep:'💪',Tricep:'🦾',Legs:'🦵',Glutes:'🍑',Core:'🔥',Cardio:'🏃',Rest:'😴'};
-const MUSCLE_GROUPS=['Chest','Back','Shoulders','Bicep','Tricep','Legs','Glutes','Core','Cardio','Rest'];
+const MUSCLE_COLORS={Chest:'#FF6B35',Back:'#3B82F6',Shoulders:'#8B5CF6',Bicep:'#00E5C3',Tricep:'#A855F7',Legs:'#10B981',Rest:'#64748B'};
+const MUSCLE_EMOJIS={Chest:'🏋️',Back:'🔱',Shoulders:'💪',Bicep:'💪',Tricep:'🦾',Legs:'🦵',Rest:'😴'};
+const SPLIT_MUSCLES=['Chest','Tricep','Back','Bicep','Legs','Shoulders'];
+
+// Preset splits for day editor
+const SPLIT_PRESETS=[
+  {
+    muscles:['Chest','Tricep'],emoji:'💪',name:'Chest + Tricep',
+    preview:{Chest:'Bench Press, Incline Press, Cable Flyes, DB Flyes, Chest Dips, Pec Deck',Tricep:'Pushdown, Skull Crushers, OH Extension, Close Grip Bench, Dips'}
+  },
+  {
+    muscles:['Back','Bicep'],emoji:'🏋️',name:'Back + Bicep',
+    preview:{Back:'Deadlift, Pull-ups, Lat Pulldown, Seated Row, Barbell Row, Face Pulls',Bicep:'Barbell Curl, DB Curl, Hammer Curl, Preacher Curl, Cable Curl'}
+  },
+  {
+    muscles:['Legs','Shoulders'],emoji:'🦵',name:'Legs + Shoulders',
+    preview:{Legs:'Squat, Leg Press, RDL, Leg Curl, Leg Extension, Hack Squat',Shoulders:'Overhead Press, Lateral Raises, Arnold Press, Rear Delt Flyes, Shrugs'}
+  },
+  {muscles:['Rest'],emoji:'😴',name:'Rest Day',preview:null},
+];
 
 const EXERCISE_LIBRARY=[
+  // CHEST
   {id:'bench_press',name:'Bench Press',muscle:'Chest',emoji:'🏋️'},
   {id:'incline_bench',name:'Incline Bench Press',muscle:'Chest',emoji:'📐'},
+  {id:'incline_db_press',name:'Incline Dumbbell Press',muscle:'Chest',emoji:'💪'},
   {id:'cable_flyes',name:'Cable Flyes',muscle:'Chest',emoji:'🔀'},
-  {id:'pushups',name:'Push-ups',muscle:'Chest',emoji:'⬇️'},
   {id:'db_flyes',name:'Dumbbell Flyes',muscle:'Chest',emoji:'🦋'},
   {id:'chest_dips',name:'Chest Dips',muscle:'Chest',emoji:'⬇️'},
   {id:'pec_deck',name:'Pec Deck',muscle:'Chest',emoji:'🎯'},
+  {id:'pushups',name:'Push-ups',muscle:'Chest',emoji:'⬇️'},
+  // TRICEP
+  {id:'tricep_pushdown',name:'Tricep Pushdown',muscle:'Tricep',emoji:'⬇️'},
+  {id:'skull_crushers',name:'Skull Crushers',muscle:'Tricep',emoji:'💀'},
+  {id:'oh_tricep_ext',name:'Overhead Tricep Extension',muscle:'Tricep',emoji:'🆙'},
+  {id:'cgbp',name:'Close Grip Bench',muscle:'Tricep',emoji:'🤏'},
+  {id:'cable_kickbacks',name:'Cable Kickbacks',muscle:'Tricep',emoji:'🔗'},
+  {id:'dips',name:'Dips',muscle:'Tricep',emoji:'⬇️'},
+  // BACK
   {id:'deadlift',name:'Deadlift',muscle:'Back',emoji:'🏆'},
   {id:'pullups',name:'Pull-ups',muscle:'Back',emoji:'⬆️'},
   {id:'lat_pulldown',name:'Lat Pulldown',muscle:'Back',emoji:'📉'},
-  {id:'seated_row',name:'Seated Row',muscle:'Back',emoji:'🚣'},
+  {id:'seated_row',name:'Seated Cable Row',muscle:'Back',emoji:'🚣'},
   {id:'barbell_row',name:'Barbell Row',muscle:'Back',emoji:'🔱'},
-  {id:'single_arm_row',name:'Single Arm Row',muscle:'Back',emoji:'💪'},
+  {id:'single_arm_row',name:'Single Arm Dumbbell Row',muscle:'Back',emoji:'💪'},
   {id:'face_pulls',name:'Face Pulls',muscle:'Back',emoji:'😤'},
-  {id:'overhead_press',name:'Overhead Press',muscle:'Shoulders',emoji:'🆙'},
-  {id:'lateral_raises',name:'Lateral Raises',muscle:'Shoulders',emoji:'↔️'},
-  {id:'front_raises',name:'Front Raises',muscle:'Shoulders',emoji:'⬆️'},
-  {id:'arnold_press',name:'Arnold Press',muscle:'Shoulders',emoji:'🅰️'},
-  {id:'rear_delt_flyes',name:'Rear Delt Flyes',muscle:'Shoulders',emoji:'🔙'},
-  {id:'shrugs',name:'Shrugs',muscle:'Shoulders',emoji:'🤷'},
+  {id:'tbar_row',name:'T-Bar Row',muscle:'Back',emoji:'🅃'},
+  {id:'straight_arm_pd',name:'Straight Arm Pulldown',muscle:'Back',emoji:'⬇️'},
+  // BICEP
   {id:'barbell_curl',name:'Barbell Curl',muscle:'Bicep',emoji:'💪'},
   {id:'db_curl',name:'Dumbbell Curl',muscle:'Bicep',emoji:'🦾'},
   {id:'hammer_curl',name:'Hammer Curl',muscle:'Bicep',emoji:'🔨'},
   {id:'preacher_curl',name:'Preacher Curl',muscle:'Bicep',emoji:'🙏'},
   {id:'cable_curl',name:'Cable Curl',muscle:'Bicep',emoji:'🔗'},
   {id:'concentration_curl',name:'Concentration Curl',muscle:'Bicep',emoji:'🧠'},
-  {id:'tricep_pushdown',name:'Tricep Pushdown',muscle:'Tricep',emoji:'⬇️'},
-  {id:'skull_crushers',name:'Skull Crushers',muscle:'Tricep',emoji:'💀'},
-  {id:'oh_tricep_ext',name:'Overhead Tricep Ext.',muscle:'Tricep',emoji:'🆙'},
-  {id:'dips',name:'Dips',muscle:'Tricep',emoji:'⬇️'},
-  {id:'cgbp',name:'Close Grip Bench',muscle:'Tricep',emoji:'🤏'},
-  {id:'kickbacks',name:'Kickbacks',muscle:'Tricep',emoji:'🦵'},
+  {id:'incline_db_curl',name:'Incline Dumbbell Curl',muscle:'Bicep',emoji:'📐'},
+  // LEGS
   {id:'squat',name:'Squat',muscle:'Legs',emoji:'🏋️'},
   {id:'leg_press',name:'Leg Press',muscle:'Legs',emoji:'🦵'},
   {id:'rdl',name:'Romanian Deadlift',muscle:'Legs',emoji:'🔱'},
   {id:'leg_curl',name:'Leg Curl',muscle:'Legs',emoji:'🌀'},
   {id:'leg_extension',name:'Leg Extension',muscle:'Legs',emoji:'↗️'},
   {id:'lunges',name:'Lunges',muscle:'Legs',emoji:'🚶'},
-  {id:'calf_raises',name:'Calf Raises',muscle:'Legs',emoji:'🦶'},
   {id:'hack_squat',name:'Hack Squat',muscle:'Legs',emoji:'⚡'},
-  {id:'hip_thrust',name:'Hip Thrust',muscle:'Glutes',emoji:'🍑'},
-  {id:'glute_bridge',name:'Glute Bridge',muscle:'Glutes',emoji:'🌉'},
-  {id:'cable_kickback_g',name:'Cable Kickback',muscle:'Glutes',emoji:'🦵'},
-  {id:'plank',name:'Plank',muscle:'Core',emoji:'📏'},
-  {id:'crunches',name:'Crunches',muscle:'Core',emoji:'🔄'},
-  {id:'leg_raises',name:'Leg Raises',muscle:'Core',emoji:'⬆️'},
-  {id:'russian_twist',name:'Russian Twist',muscle:'Core',emoji:'🔀'},
-  {id:'cable_crunch',name:'Cable Crunch',muscle:'Core',emoji:'🔗'},
-  {id:'ab_wheel',name:'Ab Wheel',muscle:'Core',emoji:'⚙️'},
-  {id:'running',name:'Running',muscle:'Cardio',emoji:'🏃'},
-  {id:'cycling',name:'Cycling',muscle:'Cardio',emoji:'🚴'},
-  {id:'rowing_cardio',name:'Rowing',muscle:'Cardio',emoji:'🚣'},
-  {id:'jump_rope',name:'Jump Rope',muscle:'Cardio',emoji:'⭕'},
-  {id:'hiit',name:'HIIT',muscle:'Cardio',emoji:'⚡'},
+  {id:'calf_raises',name:'Calf Raises',muscle:'Legs',emoji:'🦶'},
+  {id:'sumo_squat',name:'Sumo Squat',muscle:'Legs',emoji:'🦵'},
+  // SHOULDERS
+  {id:'overhead_press',name:'Overhead Press',muscle:'Shoulders',emoji:'🆙'},
+  {id:'lateral_raises',name:'Lateral Raises',muscle:'Shoulders',emoji:'↔️'},
+  {id:'front_raises',name:'Front Raises',muscle:'Shoulders',emoji:'⬆️'},
+  {id:'arnold_press',name:'Arnold Press',muscle:'Shoulders',emoji:'🅰️'},
+  {id:'rear_delt_flyes',name:'Rear Delt Flyes',muscle:'Shoulders',emoji:'🔙'},
+  {id:'upright_row',name:'Upright Row',muscle:'Shoulders',emoji:'⬆️'},
+  {id:'shrugs',name:'Shrugs',muscle:'Shoulders',emoji:'🤷'},
+  {id:'cable_lateral',name:'Cable Lateral Raises',muscle:'Shoulders',emoji:'🔀'},
 ];
 
 function getExById(id){return EXERCISE_LIBRARY.find(e=>e.id===id)||{id,name:id,muscle:'',emoji:'💪'}}
@@ -2005,7 +2023,7 @@ function renderWorkout(){
   const sub=document.getElementById('gym-sub');
   const card=document.getElementById('workout-card');
   const isRest=todaySplit.includes('Rest');
-  const splitName=todaySplit.length?todaySplit.join(' + '):'No split set';
+  const splitName=todaySplit.filter(m=>m!=='Rest').length?todaySplit.filter(m=>m!=='Rest').join(' + '):'No split set';
   const dayName=DAY_LABELS[new Date().getDay()];
   const doneExCount=log.exercises.filter(e=>e.sets&&e.sets.some(s=>s.done)).length;
   const totalVol=log.totalVolume||0;
@@ -2177,7 +2195,7 @@ function renderSplitManager(){
     const hasContent=muscles.length>0&&!muscles.includes('Rest');
     return `<div class="split-day-row" onclick="openDayEditor('${d}')">
       <div class="split-day-name ${isToday?'active':''}">${labels[d]}</div>
-      <div class="split-day-muscles ${hasContent?'has-split':''}">${muscles.length?muscles.join(' · '):'Rest Day'}</div>
+      <div class="split-day-muscles ${hasContent?'has-split':''}">${muscles.includes('Rest')||!muscles.length?'Rest Day':muscles.join(' + ')}</div>
       <div class="split-day-chev">›</div>
     </div>`;
   }).join('');
@@ -2186,11 +2204,10 @@ function renderSplitManager(){
 function openDayEditor(day){
   _editingDay=day;
   const split=getWeeklySplit();
-  _editingDayMuscles=[...(split[day]||[])];
+  _editingDayMuscles=[...(split[day]||['Rest'])];
   const labels={monday:'Monday',tuesday:'Tuesday',wednesday:'Wednesday',thursday:'Thursday',friday:'Friday',saturday:'Saturday',sunday:'Sunday'};
   document.getElementById('day-editor-title').textContent=labels[day];
-  const grid=document.getElementById('muscle-pills-grid');
-  grid.innerHTML=MUSCLE_GROUPS.map(m=>`<button class="muscle-pill ${_editingDayMuscles.includes(m)?'sel':''}" onclick="toggleMusclePill('${m}')">${m}</button>`).join('');
+  renderSplitPresetCards();
   document.getElementById('day-editor-overlay').classList.remove('hidden');
   document.getElementById('day-editor-sheet').classList.remove('hidden');
 }
@@ -2199,23 +2216,28 @@ function closeDayEditor(){
   document.getElementById('day-editor-sheet').classList.add('hidden');
   _editingDay=null;
 }
-function toggleMusclePill(m){
-  if(m==='Rest'){_editingDayMuscles=['Rest'];}
-  else{
-    _editingDayMuscles=_editingDayMuscles.filter(x=>x!=='Rest');
-    if(_editingDayMuscles.includes(m))_editingDayMuscles=_editingDayMuscles.filter(x=>x!==m);
-    else _editingDayMuscles.push(m);
-  }
-  document.querySelectorAll('.muscle-pill').forEach(p=>p.classList.toggle('sel',_editingDayMuscles.includes(p.textContent.trim())));
+function renderSplitPresetCards(){
+  const grid=document.getElementById('split-presets-grid');
+  const currentMuscles=JSON.stringify(_editingDayMuscles.slice().sort());
+  grid.innerHTML=SPLIT_PRESETS.map(p=>{
+    const isSel=JSON.stringify(p.muscles.slice().sort())===currentMuscles;
+    const previewHtml=p.preview
+      ?Object.entries(p.preview).map(([m,exs])=>`<span style="color:${MUSCLE_COLORS[m]||'var(--muted)'};font-weight:700">${m}:</span> ${exs}`).join('<br>')
+      :'';
+    return `<div class="split-preset-card ${isSel?'sel':''}" onclick="selectSplitPreset(${JSON.stringify(p.muscles)})">
+      <div class="spc-header"><span class="spc-emoji">${p.emoji}</span><span class="spc-name">${p.name}</span></div>
+      ${previewHtml?`<div class="spc-exercises">${previewHtml}</div>`:''}
+    </div>`;
+  }).join('');
 }
-function saveDayEditor(){
+function selectSplitPreset(muscles){
   if(!_editingDay)return;
   const split=getWeeklySplit();
-  split[_editingDay]=_editingDayMuscles.length?_editingDayMuscles:['Rest'];
+  split[_editingDay]=muscles;
   saveWeeklySplit(split);
   closeDayEditor();
   renderSplitManager();
-  showToast('✅','Split saved!');
+  showToast('✅',`${muscles.join(' + ')} set!`);
 }
 
 // ── EXERCISE PICKER ──────────────────────────────────────────────────
@@ -2238,8 +2260,8 @@ function renderExercisePicker(query=''){
   const dateStr=new Date().toISOString().slice(0,10);
   const log=getWorkoutLog(dateStr);
   const addedIds=log.exercises.map(e=>e.id);
-  const filters=['All',...(todaySplit.length?todaySplit:[]),...MUSCLE_GROUPS.filter(m=>!todaySplit.includes(m)&&m!=='Rest')];
-  const uniqueFilters=[...new Set(filters)].filter(f=>f!=='Rest');
+  const filters=['All',...(todaySplit.filter(m=>m!=='Rest').length?todaySplit.filter(m=>m!=='Rest'):[]),...SPLIT_MUSCLES.filter(m=>!todaySplit.includes(m))];
+  const uniqueFilters=[...new Set(filters)];
 
   let list=EXERCISE_LIBRARY;
   if(_exPickerFilter!=='All')list=list.filter(e=>e.muscle===_exPickerFilter);
