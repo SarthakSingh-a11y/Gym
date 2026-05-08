@@ -706,6 +706,109 @@
     }
     .meal-sheet-save:active{transform:scale(.97)}
 
+    /* ── ONBOARDING ── */
+    .ob-overlay{
+      position:fixed;inset:0;z-index:800;background:var(--bg);
+      display:flex;flex-direction:column;align-items:center;overflow-y:auto;
+    }
+    .ob-screen{width:100%;max-width:420px;padding:0 20px 24px;display:flex;flex-direction:column;min-height:100dvh}
+    .ob-header{padding:52px 0 24px;text-align:center}
+    .ob-dots{display:flex;justify-content:center;gap:6px;margin-bottom:20px}
+    .ob-dot{width:8px;height:8px;border-radius:4px;background:var(--border);transition:all .3s}
+    .ob-dot.active{width:24px;background:var(--mint)}
+    .ob-title{font-size:24px;font-weight:800;letter-spacing:-.4px;margin-bottom:6px}
+    .ob-sub{font-size:14px;color:var(--muted);line-height:1.5}
+    .ob-fields{display:flex;flex-direction:column;gap:16px;flex:1}
+    .ob-field-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .ob-label{font-size:14px;font-weight:600;flex-shrink:0;min-width:64px}
+    .ob-input{
+      background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:10px;
+      padding:11px 12px;color:var(--text);font-size:16px;font-family:var(--font);font-weight:600;
+      outline:none;width:120px;text-align:center;transition:border-color var(--tr);
+    }
+    .ob-input.short{width:84px}
+    .ob-input:focus{border-color:var(--mint)}
+    .ob-input-unit{display:flex;align-items:center;gap:8px}
+    .ob-pills{display:flex;gap:4px}
+    .ob-pill{
+      padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);
+      background:none;color:var(--muted);font-size:13px;font-family:var(--font);font-weight:600;
+      cursor:pointer;transition:all var(--tr);white-space:nowrap;
+    }
+    .ob-pill.active{background:var(--mint);border-color:transparent;color:#0B0C14}
+    .ob-options{display:flex;flex-direction:column;gap:8px;flex:1}
+    .ob-option{
+      display:flex;align-items:center;gap:14px;padding:14px 16px;
+      background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius-sm);
+      cursor:pointer;text-align:left;transition:all var(--tr);font-family:var(--font);width:100%;
+    }
+    .ob-option.active{border-color:var(--mint);background:rgba(0,229,195,.07)}
+    .ob-option:active{transform:scale(.98)}
+    .ob-option-icon{font-size:22px;flex-shrink:0}
+    .ob-option-name{font-size:14px;font-weight:700;color:var(--text)}
+    .ob-option-hint{font-size:12px;color:var(--muted);margin-top:1px}
+    .ob-actions{display:flex;gap:10px;padding-top:20px;align-items:center}
+    .ob-skip{background:none;border:none;color:var(--muted);font-size:13px;font-family:var(--font);cursor:pointer;padding:8px 4px;white-space:nowrap}
+    .ob-back{
+      flex:1;padding:14px;background:none;border:1.5px solid var(--border);
+      border-radius:var(--radius-sm);color:var(--muted);font-size:14px;font-family:var(--font);
+      font-weight:600;cursor:pointer;transition:all var(--tr);
+    }
+    .ob-next{
+      flex:2;padding:14px;background:linear-gradient(135deg,var(--mint),var(--blue));
+      border:none;border-radius:var(--radius-sm);color:#0B0C14;font-size:14px;font-family:var(--font);
+      font-weight:800;cursor:pointer;transition:all var(--tr);
+    }
+    .ob-next:active,.ob-back:active{transform:scale(.97)}
+    .ob-result-card{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+      padding:4px 16px;margin:12px 0;flex:1;position:relative;overflow:hidden;
+    }
+    .ob-result-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--mint),var(--neon))}
+    .ob-result-row{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:14px 0;border-bottom:1px solid var(--border);
+    }
+    .ob-result-row:last-of-type{border-bottom:none}
+    .ob-result-label{font-size:13px;color:var(--muted)}
+    .ob-result-val{font-size:17px;font-weight:800}
+    .ob-result-note{font-size:11px;color:var(--muted);text-align:center;padding:10px 0}
+    /* Body Profile in Settings */
+    .bp-card{
+      margin:0 16px 4px;background:var(--card);border:1px solid var(--border);
+      border-radius:var(--radius);padding:16px;position:relative;overflow:hidden;
+    }
+    .bp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--mint),var(--blue))}
+    .bp-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+    .bp-info-item{background:rgba(255,255,255,.04);border-radius:8px;padding:8px 10px}
+    .bp-info-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+    .bp-info-val{font-size:14px;font-weight:700;margin-top:2px}
+    .bp-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+    .bp-badge{
+      padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;
+      background:rgba(0,229,195,.1);border:1px solid rgba(0,229,195,.2);color:var(--mint);
+    }
+    .bp-targets{
+      background:rgba(0,229,195,.06);border:1px solid rgba(0,229,195,.15);border-radius:10px;
+      padding:11px 14px;margin:10px 0;text-align:center;
+    }
+    .bp-targets-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+    .bp-targets-val{font-size:15px;font-weight:800}
+    .bp-edit-btn{
+      width:100%;padding:11px;background:none;border:1.5px solid var(--mint);
+      border-radius:var(--radius-sm);color:var(--mint);font-size:13px;font-family:var(--font);
+      font-weight:700;cursor:pointer;transition:all var(--tr);margin-top:6px;
+    }
+    .bp-edit-btn:active{background:rgba(0,229,195,.08)}
+    .bp-override-row{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-top:12px;padding-top:12px;border-top:1px solid var(--border);gap:10px;
+    }
+    .bp-override-label{font-size:13px;font-weight:600}
+    .bp-override-hint{font-size:11px;color:var(--muted);margin-top:1px}
+    .bp-override-fields{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+    .bp-no-profile{text-align:center;padding:20px 16px;color:var(--muted);font-size:13px;line-height:1.6}
+
     /* ── UTILITIES ── */
     .hidden{display:none!important}
     @keyframes check-bounce{0%{transform:scale(1)}40%{transform:scale(1.3)}70%{transform:scale(.9)}100%{transform:scale(1)}}
@@ -728,6 +831,103 @@
     <div class="install-actions">
       <button class="install-do" id="install-do-btn">Install</button>
       <button class="install-no" id="install-no-btn">✕</button>
+    </div>
+  </div>
+
+  <!-- ONBOARDING OVERLAY -->
+  <div id="onboarding" class="ob-overlay hidden">
+    <!-- Step 1: Basic Info -->
+    <div id="ob-step1" class="ob-screen">
+      <div class="ob-header">
+        <div class="ob-dots"><span class="ob-dot active"></span><span class="ob-dot"></span><span class="ob-dot"></span></div>
+        <div class="ob-title">Let's set your goals 🎯</div>
+        <div class="ob-sub">We'll calculate your personal calorie & protein targets</div>
+      </div>
+      <div class="ob-fields">
+        <div class="ob-field-row">
+          <label class="ob-label">Age</label>
+          <input type="number" id="ob-age" class="ob-input" placeholder="24" min="10" max="100" inputmode="numeric"/>
+        </div>
+        <div class="ob-field-row">
+          <label class="ob-label">Gender</label>
+          <div class="ob-pills" id="ob-gender-pills">
+            <button class="ob-pill active" data-val="male">Male</button>
+            <button class="ob-pill" data-val="female">Female</button>
+          </div>
+        </div>
+        <div class="ob-field-row">
+          <label class="ob-label">Weight</label>
+          <div class="ob-input-unit">
+            <input type="number" id="ob-weight" class="ob-input short" placeholder="75" min="1" max="500" inputmode="decimal"/>
+            <div class="ob-pills" id="ob-weight-unit-pills">
+              <button class="ob-pill active" data-val="kg">kg</button>
+              <button class="ob-pill" data-val="lbs">lbs</button>
+            </div>
+          </div>
+        </div>
+        <div class="ob-field-row">
+          <label class="ob-label">Height</label>
+          <div class="ob-input-unit">
+            <input type="number" id="ob-height" class="ob-input short" placeholder="178" min="1" max="300" inputmode="decimal"/>
+            <div class="ob-pills" id="ob-height-unit-pills">
+              <button class="ob-pill active" data-val="cm">cm</button>
+              <button class="ob-pill" data-val="ft">ft</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ob-actions">
+        <button class="ob-skip" onclick="skipOnboarding()">Skip for now</button>
+        <button class="ob-next" onclick="obGoStep(2)">Next →</button>
+      </div>
+    </div>
+    <!-- Step 2: Activity Level -->
+    <div id="ob-step2" class="ob-screen hidden">
+      <div class="ob-header">
+        <div class="ob-dots"><span class="ob-dot"></span><span class="ob-dot active"></span><span class="ob-dot"></span></div>
+        <div class="ob-title">Activity Level</div>
+        <div class="ob-sub">How active are you in a typical week?</div>
+      </div>
+      <div class="ob-options" id="ob-activity-options">
+        <button class="ob-option" data-val="sedentary"><span class="ob-option-icon">🛋️</span><div class="ob-option-text"><div class="ob-option-name">Sedentary</div><div class="ob-option-hint">Little or no exercise</div></div></button>
+        <button class="ob-option" data-val="light"><span class="ob-option-icon">🚶</span><div class="ob-option-text"><div class="ob-option-name">Lightly Active</div><div class="ob-option-hint">1–3 days/week</div></div></button>
+        <button class="ob-option active" data-val="moderate"><span class="ob-option-icon">🏃</span><div class="ob-option-text"><div class="ob-option-name">Moderately Active</div><div class="ob-option-hint">3–5 days/week</div></div></button>
+        <button class="ob-option" data-val="very"><span class="ob-option-icon">💪</span><div class="ob-option-text"><div class="ob-option-name">Very Active</div><div class="ob-option-hint">6–7 days/week</div></div></button>
+        <button class="ob-option" data-val="athlete"><span class="ob-option-icon">🔥</span><div class="ob-option-text"><div class="ob-option-name">Athlete</div><div class="ob-option-hint">Twice daily training</div></div></button>
+      </div>
+      <div class="ob-actions">
+        <button class="ob-back" onclick="obGoStep(1)">← Back</button>
+        <button class="ob-next" onclick="obGoStep(3)">Next →</button>
+      </div>
+    </div>
+    <!-- Step 3: Goal -->
+    <div id="ob-step3" class="ob-screen hidden">
+      <div class="ob-header">
+        <div class="ob-dots"><span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot active"></span></div>
+        <div class="ob-title">Your Goal</div>
+        <div class="ob-sub">What are you training for?</div>
+      </div>
+      <div class="ob-options" id="ob-goal-options">
+        <button class="ob-option" data-val="lose"><span class="ob-option-icon">🔻</span><div class="ob-option-text"><div class="ob-option-name">Lose Weight</div><div class="ob-option-hint">Calorie deficit (−300 kcal)</div></div></button>
+        <button class="ob-option" data-val="maintain"><span class="ob-option-icon">⚖️</span><div class="ob-option-text"><div class="ob-option-name">Maintain Weight</div><div class="ob-option-hint">TDEE as-is</div></div></button>
+        <button class="ob-option active" data-val="gain"><span class="ob-option-icon">📈</span><div class="ob-option-text"><div class="ob-option-name">Gain Muscle</div><div class="ob-option-hint">Calorie surplus (+300 kcal)</div></div></button>
+      </div>
+      <div class="ob-actions">
+        <button class="ob-back" onclick="obGoStep(2)">← Back</button>
+        <button class="ob-next" onclick="obCalculate()">Calculate My Goal →</button>
+      </div>
+    </div>
+    <!-- Result -->
+    <div id="ob-result" class="ob-screen hidden">
+      <div class="ob-header">
+        <div class="ob-title">Your Daily Targets 🎯</div>
+        <div class="ob-sub">Personalised with Mifflin-St Jeor formula</div>
+      </div>
+      <div class="ob-result-card" id="ob-result-card"></div>
+      <div class="ob-actions">
+        <button class="ob-back" onclick="obGoStep(3)">Recalculate</button>
+        <button class="ob-next" onclick="obSave()">Save &amp; Continue →</button>
+      </div>
     </div>
   </div>
 
@@ -1074,16 +1274,10 @@
           <input class="settings-input wide" id="setting-name" type="text" placeholder="Champion" maxlength="30"/>
         </div>
       </div>
+      <div class="settings-section-title">Body Profile</div>
+      <div id="bp-section"></div>
       <div class="settings-section-title">Goals</div>
       <div class="settings-group">
-        <div class="settings-row">
-          <div><div class="settings-label">Calorie Goal</div><div class="settings-hint">Daily target in kcal</div></div>
-          <input class="settings-input" id="setting-calories" type="number" inputmode="numeric" placeholder="2000" min="500" max="9999"/>
-        </div>
-        <div class="settings-row">
-          <div><div class="settings-label">Protein Goal</div><div class="settings-hint">Daily target in grams</div></div>
-          <input class="settings-input" id="setting-protein" type="number" inputmode="numeric" placeholder="150" min="50" max="500"/>
-        </div>
         <div class="settings-row">
           <div><div class="settings-label">Step Goal</div><div class="settings-hint">Daily steps target</div></div>
           <input class="settings-input" id="setting-steps" type="number" inputmode="numeric" placeholder="10000" min="1000" max="50000"/>
@@ -1185,13 +1379,46 @@ const QUOTES=[
   "Make yourself proud.",
 ];
 
+// ── BODY PROFILE ─────────────────────────────────────────────────────
+function getBodyProfile(){return JSON.parse(localStorage.getItem('body_profile')||'null')}
+function saveBodyProfile(p){localStorage.setItem('body_profile',JSON.stringify(p))}
+
+function calcGoalsFromProfile(p){
+  let kg=parseFloat(p.weight)||70;
+  let cm=parseFloat(p.height)||170;
+  if(p.weightUnit==='lbs')kg*=0.453592;
+  if(p.heightUnit==='ft')cm*=30.48;
+  const age=parseInt(p.age)||25;
+  const bmr=p.gender==='female'
+    ?(10*kg)+(6.25*cm)-(5*age)-161
+    :(10*kg)+(6.25*cm)-(5*age)+5;
+  const actMap={sedentary:1.2,light:1.375,moderate:1.55,very:1.725,athlete:1.9};
+  const tdee=bmr*(actMap[p.activityLevel]||1.55);
+  const offset={lose:-300,maintain:0,gain:300};
+  const rawCal=tdee+(offset[p.goal]||0);
+  const calorieGoal=Math.round(rawCal/50)*50;
+  const proMult={lose:2.0,maintain:1.8,gain:2.2};
+  const proteinGoal=Math.round((kg*(proMult[p.goal]||1.8))/5)*5;
+  return{calorieGoal,proteinGoal,bmr:Math.round(bmr),tdee:Math.round(tdee)};
+}
+
 const DEFAULT_SETTINGS={
   name:'Champion',calorieGoal:2000,proteinGoal:150,stepGoal:10000,waterGoal:8,sleepGoal:8,
   enabledTrackers:{meals:true,workout:true,steps:true,water:true,sleep:true,focus:true},
 };
 function getSettings(){
   const s=JSON.parse(localStorage.getItem('dos_settings')||'{}');
-  return{...DEFAULT_SETTINGS,...s,enabledTrackers:{...DEFAULT_SETTINGS.enabledTrackers,...(s.enabledTrackers||{})}};
+  const merged={...DEFAULT_SETTINGS,...s,enabledTrackers:{...DEFAULT_SETTINGS.enabledTrackers,...(s.enabledTrackers||{})}};
+  const profile=getBodyProfile();
+  if(profile){
+    merged.calorieGoal=profile.manualOverride
+      ?(profile.manualCalories||profile.calorieGoal||2000)
+      :(profile.calorieGoal||2000);
+    merged.proteinGoal=profile.manualOverride
+      ?(profile.manualProtein||profile.proteinGoal||150)
+      :(profile.proteinGoal||150);
+  }
+  return merged;
 }
 function saveSettings(s){localStorage.setItem('dos_settings',JSON.stringify(s))}
 
@@ -1821,9 +2048,8 @@ function renderProgress(){
 
 function renderSettings(){
   document.getElementById('setting-name').value=settings.name||'';
-  document.getElementById('setting-calories').value=settings.calorieGoal||2000;
-  document.getElementById('setting-protein').value=settings.proteinGoal||150;
   document.getElementById('setting-steps').value=settings.stepGoal||10000;
+  renderBodyProfileSection();
   document.getElementById('setting-water').value=settings.waterGoal||8;
   document.getElementById('setting-sleep').value=settings.sleepGoal||8;
   const toggleWrap=document.getElementById('tracker-toggles');
@@ -1853,8 +2079,6 @@ document.getElementById('save-settings-btn').addEventListener('click',()=>{
   document.querySelectorAll('[data-tracker]').forEach(cb=>{enabled[cb.dataset.tracker]=cb.checked});
   settings={
     name:document.getElementById('setting-name').value.trim()||'Champion',
-    calorieGoal:parseInt(document.getElementById('setting-calories').value)||2000,
-    proteinGoal:parseInt(document.getElementById('setting-protein').value)||150,
     stepGoal:parseInt(document.getElementById('setting-steps').value)||10000,
     waterGoal:parseInt(document.getElementById('setting-water').value)||8,
     sleepGoal:parseFloat(document.getElementById('setting-sleep').value)||8,
@@ -1933,6 +2157,182 @@ document.getElementById('qls-workout').addEventListener('click',()=>{
   if(state.workout.done)celebrate('🏋️','Workout Done!',"You showed up. That's everything.");
   else showToast('💪','Workout unmarked.');
 });
+
+// ── ONBOARDING ───────────────────────────────────────────────────────
+let _obData={};
+const ACT_LABELS={sedentary:'🛋️ Sedentary',light:'🚶 Lightly Active',moderate:'🏃 Moderate',very:'💪 Very Active',athlete:'🔥 Athlete'};
+const GOAL_LABELS={lose:'🔻 Lose Weight',maintain:'⚖️ Maintain',gain:'📈 Gain Muscle'};
+
+function initObPillGroups(){
+  document.querySelectorAll('.ob-pills').forEach(group=>{
+    group.querySelectorAll('.ob-pill').forEach(pill=>{
+      pill.addEventListener('click',()=>{
+        group.querySelectorAll('.ob-pill').forEach(p=>p.classList.remove('active'));
+        pill.classList.add('active');
+      });
+    });
+  });
+  ['#ob-activity-options','#ob-goal-options'].forEach(sel=>{
+    const container=document.querySelector(sel);
+    if(!container)return;
+    container.querySelectorAll('.ob-option').forEach(opt=>{
+      opt.addEventListener('click',()=>{
+        container.querySelectorAll('.ob-option').forEach(o=>o.classList.remove('active'));
+        opt.classList.add('active');
+      });
+    });
+  });
+}
+
+function obGoStep(step){
+  // Validate step 1 before advancing
+  if(step===2){
+    const age=parseInt(document.getElementById('ob-age').value);
+    const weight=parseFloat(document.getElementById('ob-weight').value);
+    const height=parseFloat(document.getElementById('ob-height').value);
+    if(!age||age<10||age>100){document.getElementById('ob-age').focus();showToast('⚠️','Please enter a valid age.');return;}
+    if(!weight||weight<=0){document.getElementById('ob-weight').focus();showToast('⚠️','Please enter your weight.');return;}
+    if(!height||height<=0){document.getElementById('ob-height').focus();showToast('⚠️','Please enter your height.');return;}
+  }
+  document.querySelectorAll('.ob-screen').forEach(s=>s.classList.add('hidden'));
+  const el=document.getElementById(`ob-step${step}`)||document.getElementById(`ob-result`);
+  if(el)el.classList.remove('hidden');
+}
+
+function obCalculate(){
+  const age=parseInt(document.getElementById('ob-age').value);
+  const weight=parseFloat(document.getElementById('ob-weight').value);
+  const height=parseFloat(document.getElementById('ob-height').value);
+  if(!age||!weight||!height){showToast('⚠️','Please complete all fields first.');obGoStep(1);return;}
+  const gender=document.querySelector('#ob-gender-pills .ob-pill.active')?.dataset.val||'male';
+  const weightUnit=document.querySelector('#ob-weight-unit-pills .ob-pill.active')?.dataset.val||'kg';
+  const heightUnit=document.querySelector('#ob-height-unit-pills .ob-pill.active')?.dataset.val||'cm';
+  const activity=document.querySelector('#ob-activity-options .ob-option.active')?.dataset.val||'moderate';
+  const goal=document.querySelector('#ob-goal-options .ob-option.active')?.dataset.val||'maintain';
+  _obData={age,gender,weight,weightUnit,height,heightUnit,activityLevel:activity,goal};
+  const r=calcGoalsFromProfile(_obData);
+  _obData._results=r;
+  document.getElementById('ob-result-card').innerHTML=`
+    <div class="ob-result-row">
+      <span class="ob-result-label">🔥 Daily Calories</span>
+      <span class="ob-result-val" style="color:var(--orange)">${r.calorieGoal.toLocaleString()} kcal/day</span>
+    </div>
+    <div class="ob-result-row">
+      <span class="ob-result-label">🥩 Protein</span>
+      <span class="ob-result-val" style="color:var(--mint)">${r.proteinGoal}g/day</span>
+    </div>
+    <div class="ob-result-row">
+      <span class="ob-result-label">⚡ BMR</span>
+      <span class="ob-result-val">${r.bmr.toLocaleString()} kcal</span>
+    </div>
+    <div class="ob-result-row">
+      <span class="ob-result-label">🎯 TDEE</span>
+      <span class="ob-result-val">${r.tdee.toLocaleString()} kcal</span>
+    </div>
+    <div class="ob-result-note">Based on Mifflin-St Jeor formula</div>`;
+  document.querySelectorAll('.ob-screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById('ob-result').classList.remove('hidden');
+}
+
+function obSave(){
+  const r=_obData._results||calcGoalsFromProfile(_obData);
+  const profile={..._obData,calorieGoal:r.calorieGoal,proteinGoal:r.proteinGoal,
+    manualOverride:false,manualCalories:null,manualProtein:null};
+  delete profile._results;
+  saveBodyProfile(profile);
+  document.getElementById('onboarding').classList.add('hidden');
+  settings=getSettings();
+  renderAll();
+  showToast('🎯','Goals calculated & saved!');
+}
+
+function skipOnboarding(){
+  const r=calcGoalsFromProfile({age:25,gender:'male',weight:70,weightUnit:'kg',height:170,heightUnit:'cm',activityLevel:'moderate',goal:'maintain'});
+  saveBodyProfile({age:null,gender:'male',weight:null,weightUnit:'kg',height:null,heightUnit:'cm',
+    activityLevel:'moderate',goal:'maintain',calorieGoal:r.calorieGoal,proteinGoal:r.proteinGoal,
+    manualOverride:false,manualCalories:null,manualProtein:null});
+  document.getElementById('onboarding').classList.add('hidden');
+  settings=getSettings();
+  renderAll();
+}
+
+function checkOnboarding(){
+  if(!getBodyProfile())document.getElementById('onboarding').classList.remove('hidden');
+}
+
+// Body profile settings section
+function renderBodyProfileSection(){
+  const el=document.getElementById('bp-section');
+  if(!el)return;
+  const profile=getBodyProfile();
+  if(!profile||profile.age===null){
+    el.innerHTML=`<div class="bp-card"><div class="bp-no-profile">No profile set up yet.<br>
+      <button style="color:var(--mint);background:none;border:none;font-size:13px;cursor:pointer;font-weight:700;margin-top:8px"
+        onclick="document.getElementById('onboarding').classList.remove('hidden');obGoStep(1)">Set up Body Profile →</button>
+    </div></div>`;
+    return;
+  }
+  const effectiveCal=profile.manualOverride?(profile.manualCalories||profile.calorieGoal):profile.calorieGoal;
+  const effectivePro=profile.manualOverride?(profile.manualProtein||profile.proteinGoal):profile.proteinGoal;
+  const wu=profile.weight?`${profile.weight} ${profile.weightUnit}`:'—';
+  const hu=profile.height?`${profile.height} ${profile.heightUnit}`:'—';
+  el.innerHTML=`<div class="bp-card">
+    <div class="bp-info-grid">
+      <div class="bp-info-item"><div class="bp-info-label">Age</div><div class="bp-info-val">${profile.age||'—'} yrs</div></div>
+      <div class="bp-info-item"><div class="bp-info-label">Gender</div><div class="bp-info-val" style="text-transform:capitalize">${profile.gender||'—'}</div></div>
+      <div class="bp-info-item"><div class="bp-info-label">Weight</div><div class="bp-info-val">${wu}</div></div>
+      <div class="bp-info-item"><div class="bp-info-label">Height</div><div class="bp-info-val">${hu}</div></div>
+    </div>
+    <div class="bp-badges">
+      <span class="bp-badge">${ACT_LABELS[profile.activityLevel]||profile.activityLevel}</span>
+      <span class="bp-badge">${GOAL_LABELS[profile.goal]||profile.goal}</span>
+    </div>
+    <div class="bp-targets">
+      <div class="bp-targets-label">Calculated Targets</div>
+      <div class="bp-targets-val">${effectiveCal.toLocaleString()} kcal · ${effectivePro}g protein</div>
+    </div>
+    <button class="bp-edit-btn" onclick="document.getElementById('onboarding').classList.remove('hidden');obGoStep(1)">✏️ Edit Profile</button>
+    <div class="bp-override-row">
+      <div>
+        <div class="bp-override-label">Override Manually</div>
+        <div class="bp-override-hint">Set custom calorie &amp; protein goals</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="bp-override-toggle" ${profile.manualOverride?'checked':''}/>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="bp-override-fields" id="bp-override-fields" style="display:${profile.manualOverride?'flex':'none'}">
+      <div class="settings-row" style="border-radius:var(--radius-sm);margin:0">
+        <div><div class="settings-label">Calorie Goal</div><div class="settings-hint">kcal/day</div></div>
+        <input class="settings-input" id="bp-manual-cal" type="number" inputmode="numeric" placeholder="2000" value="${profile.manualCalories||profile.calorieGoal||''}"/>
+      </div>
+      <div class="settings-row" style="border-radius:var(--radius-sm);margin:0">
+        <div><div class="settings-label">Protein Goal</div><div class="settings-hint">grams/day</div></div>
+        <input class="settings-input" id="bp-manual-pro" type="number" inputmode="numeric" placeholder="150" value="${profile.manualProtein||profile.proteinGoal||''}"/>
+      </div>
+      <button class="save-btn" style="margin:8px 0 0;width:100%" onclick="saveBpOverride()">Apply Override</button>
+    </div>
+  </div>`;
+  document.getElementById('bp-override-toggle').addEventListener('change',function(){
+    const p=getBodyProfile()||{};
+    p.manualOverride=this.checked;
+    saveBodyProfile(p);
+    document.getElementById('bp-override-fields').style.display=this.checked?'flex':'none';
+    settings=getSettings();renderMeals();renderScore();renderDiscCards();
+  });
+}
+
+function saveBpOverride(){
+  const p=getBodyProfile()||{};
+  const cal=parseInt(document.getElementById('bp-manual-cal').value);
+  const pro=parseInt(document.getElementById('bp-manual-pro').value);
+  if(cal>0)p.manualCalories=cal;
+  if(pro>0)p.manualProtein=pro;
+  saveBodyProfile(p);
+  settings=getSettings();renderMeals();renderScore();renderDiscCards();
+  showToast('✅','Custom goals applied!');
+}
 
 // ── MEAL SHEET ──────────────────────────────────────────────────────
 let _editingMealId=null;
@@ -2108,6 +2508,8 @@ function renderAll(){
 }
 
 renderAll();
+initObPillGroups();
+checkOnboarding();
 </script>
 </body>
 </html>
