@@ -611,6 +611,83 @@
     @keyframes toast-slide{from{transform:translateY(-20px);opacity:0}to{transform:none;opacity:1}}
     @keyframes toast-hide{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
 
+    /* ── CUSTOM MEALS ── */
+    .meal-row-custom{
+      display:flex;align-items:center;gap:10px;padding:10px 4px;
+      border-bottom:1px solid var(--border);border-left:3px solid transparent;
+      transition:all var(--tr);
+    }
+    .meal-row-custom:last-child{border-bottom:none}
+    .meal-row-custom.checked-row{border-left-color:var(--meals-a);background:rgba(255,107,53,.06);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+    .meal-row-custom.checked-row .meal-name{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(255,107,53,.4)}
+    .meal-stats-pill{
+      font-size:10px;font-weight:600;color:var(--muted);
+      background:rgba(255,255,255,.06);border:1px solid var(--border);
+      border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0;
+    }
+    .meal-dot-btn{
+      background:none;border:none;color:var(--muted);font-size:18px;font-weight:700;
+      cursor:pointer;padding:4px 6px;border-radius:6px;transition:background var(--tr);
+      flex-shrink:0;line-height:1;
+    }
+    .meal-dot-btn:hover{background:rgba(255,255,255,.08)}
+    .meal-dot-menu{
+      position:fixed;z-index:500;
+      background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);
+      box-shadow:0 8px 24px rgba(0,0,0,.5);overflow:hidden;min-width:120px;
+    }
+    .meal-dot-item{
+      display:block;width:100%;padding:11px 16px;background:none;border:none;
+      color:var(--text);font-size:13px;font-family:var(--font);font-weight:500;
+      text-align:left;cursor:pointer;transition:background var(--tr);
+    }
+    .meal-dot-item:hover{background:rgba(255,255,255,.07)}
+    .meal-dot-item.danger{color:#ff6b6b}
+    .meals-empty{
+      text-align:center;padding:28px 16px;color:var(--muted);
+      font-size:13px;line-height:1.6;
+    }
+    .meals-empty-icon{font-size:32px;margin-bottom:8px}
+    .add-meal-btn{
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      width:100%;margin-top:12px;padding:11px;
+      background:rgba(255,107,53,.08);border:1px dashed rgba(255,107,53,.35);
+      border-radius:var(--radius-sm);color:var(--meals-a);
+      font-size:13px;font-family:var(--font);font-weight:600;
+      cursor:pointer;transition:all var(--tr);
+    }
+    .add-meal-btn:active{background:rgba(255,107,53,.15)}
+    .meals-totals{
+      margin-top:12px;padding:10px 12px;
+      background:rgba(255,107,53,.06);border-radius:var(--radius-sm);
+      border:1px solid rgba(255,107,53,.15);
+      font-size:12px;font-weight:600;color:var(--text);
+      display:flex;justify-content:space-between;align-items:center;
+    }
+    .meals-totals-label{color:var(--muted);font-size:11px}
+    .meal-sheet-input{
+      width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);
+      border-radius:var(--radius-sm);padding:13px 14px;color:var(--text);
+      font-size:15px;font-family:var(--font);font-weight:500;
+      outline:none;transition:border-color var(--tr);
+    }
+    .meal-sheet-input:focus{border-color:var(--meals-a)}
+    .meal-sheet-input::placeholder{color:var(--muted)}
+    .meal-sheet-fields{display:flex;flex-direction:column;gap:10px;padding:0 16px}
+    .meal-sheet-actions{display:flex;gap:10px;padding:16px}
+    .meal-sheet-cancel{
+      flex:1;padding:14px;background:none;border:1px solid var(--border);
+      border-radius:var(--radius-sm);color:var(--muted);font-size:14px;
+      font-family:var(--font);font-weight:600;cursor:pointer;transition:all var(--tr);
+    }
+    .meal-sheet-cancel:active{background:rgba(255,255,255,.05)}
+    .meal-sheet-save{
+      flex:2;padding:14px;background:linear-gradient(135deg,var(--meals-a),var(--meals-b));
+      border:none;border-radius:var(--radius-sm);color:#fff;font-size:14px;
+      font-family:var(--font);font-weight:700;cursor:pointer;transition:all var(--tr);
+    }
+    .meal-sheet-save:active{transform:scale(.97)}
+
     /* ── UTILITIES ── */
     .hidden{display:none!important}
     @keyframes check-bounce{0%{transform:scale(1)}40%{transform:scale(1.3)}70%{transform:scale(.9)}100%{transform:scale(1)}}
@@ -634,6 +711,28 @@
       <button class="install-do" id="install-do-btn">Install</button>
       <button class="install-no" id="install-no-btn">✕</button>
     </div>
+  </div>
+
+  <!-- MEAL ADD/EDIT SHEET -->
+  <div id="meal-sheet-overlay" class="ql-overlay hidden" onclick="closeMealSheet()"></div>
+  <div id="meal-sheet" class="quick-log-sheet hidden">
+    <div class="qls-handle"></div>
+    <div class="qls-title" id="meal-sheet-title">Add Meal</div>
+    <div class="meal-sheet-fields">
+      <input type="text" id="meal-name-input" class="meal-sheet-input" placeholder="e.g. Breakfast, Dal Rice, Whey Shake…" maxlength="60"/>
+      <input type="number" id="meal-cal-input" class="meal-sheet-input" placeholder="Calories (optional)" inputmode="numeric" min="0" max="9999"/>
+      <input type="number" id="meal-pro-input" class="meal-sheet-input" placeholder="Protein in grams (optional)" inputmode="decimal" min="0" max="999"/>
+    </div>
+    <div class="meal-sheet-actions">
+      <button class="meal-sheet-cancel" id="meal-sheet-cancel-btn">Cancel</button>
+      <button class="meal-sheet-save" id="meal-sheet-save-btn">Save Meal</button>
+    </div>
+  </div>
+
+  <!-- MEAL 3-DOT DROPDOWN -->
+  <div id="meal-dot-menu" class="meal-dot-menu hidden">
+    <button class="meal-dot-item" id="meal-dot-edit">✏️  Edit</button>
+    <button class="meal-dot-item danger" id="meal-dot-delete">🗑  Delete</button>
   </div>
 
   <!-- QUICK LOG SHEET -->
@@ -708,15 +807,8 @@
       <div class="card card-meals" id="meals-card">
         <div class="card-inner">
           <div id="meal-rows"></div>
-          <div class="progress-section">
-            <div class="progress-header">
-              <span class="progress-label">Protein Goal</span>
-              <span class="progress-value" id="protein-label">0g <small>/ 150g</small></span>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill fill-meals" id="protein-bar" style="width:0%"></div>
-            </div>
-          </div>
+          <button class="add-meal-btn" id="add-meal-btn">＋ Add Meal</button>
+          <div id="meals-footer"></div>
         </div>
       </div>
 
@@ -1012,13 +1104,9 @@
 <div id="toast-container"></div>
 
 <script>
-const MEALS=[
-  {id:'breakfast',label:'Breakfast',emoji:'🌅'},
-  {id:'lunch',label:'Lunch',emoji:'🌞'},
-  {id:'dinner',label:'Dinner',emoji:'🌙'},
-  {id:'preworkout',label:'Pre-Workout',emoji:'⚡'},
-  {id:'postworkout',label:'Post-Workout',emoji:'💊'},
-];
+function generateId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function getMealsList(){return JSON.parse(localStorage.getItem('meals_list')||'[]')}
+function saveMealsList(list){localStorage.setItem('meals_list',JSON.stringify(list))}
 const FOCUS_ITEMS=[
   {id:'journal',label:'Morning journaling / intention set',emoji:'✍️'},
   {id:'noscroll',label:'No doom-scrolling before 10am',emoji:'📵'},
@@ -1071,7 +1159,7 @@ function saveSettings(s){localStorage.setItem('dos_settings',JSON.stringify(s))}
 const todayKey=()=>`discipline_${new Date().toISOString().slice(0,10)}`;
 function getDay(key){
   const defaults={
-    meals:{},workout:{done:false,type:null},steps:0,
+    meals:{checked:[]},workout:{done:false,type:null},steps:0,
     water:{filled:[]},sleep:{hours:0,bedtime:'',waketime:''},
     focus:{journal:false,noscroll:false,meditation:false,mood:0},
     date:key.replace('discipline_',''),
@@ -1081,6 +1169,7 @@ function getDay(key){
   const p=JSON.parse(stored);
   return{
     ...defaults,...p,
+    meals:{checked:Array.isArray(p.meals?.checked)?p.meals.checked:[]},
     water:p.water||defaults.water,
     sleep:{...defaults.sleep,...(p.sleep||{})},
     focus:{...defaults.focus,...(p.focus||{})},
@@ -1154,9 +1243,13 @@ function renderWeeklyWins(){
 
 function computeOverallScore(d){
   const s=getSettings();
-  const checkedMeals=MEALS.filter(m=>d.meals?.[m.id]?.checked).length;
-  const totalProtein=MEALS.reduce((a,m)=>a+(parseFloat(d.meals?.[m.id]?.protein)||0),0);
-  const mealScore=((checkedMeals/MEALS.length)+Math.min(totalProtein/s.proteinGoal,1))/2;
+  const mList=getMealsList();
+  const checkedIds=d.meals?.checked||[];
+  const checkedMeals=mList.filter(m=>checkedIds.includes(m.id)).length;
+  const totalProtein=mList.filter(m=>checkedIds.includes(m.id)).reduce((a,m)=>a+(m.protein||0),0);
+  const mealRatio=mList.length>0?checkedMeals/mList.length:0;
+  const proteinRatio=mList.length>0?Math.min(totalProtein/s.proteinGoal,1):0;
+  const mealScore=mList.length>0?(mealRatio+proteinRatio)/2:0;
   const gymScore=d.workout?.done?1:0;
   const stepScore=Math.min((d.steps||0)/s.stepGoal,1);
   const filledG=(d.water?.filled||[]).filter(Boolean).length;
@@ -1178,9 +1271,13 @@ function computeOverallScore(d){
 }
 
 function calcCurrentScores(){
-  const checkedMeals=MEALS.filter(m=>state.meals[m.id]?.checked).length;
-  const totalProtein=MEALS.reduce((a,m)=>a+(parseFloat(state.meals[m.id]?.protein)||0),0);
-  const mealScore=((checkedMeals/MEALS.length)+Math.min(totalProtein/settings.proteinGoal,1))/2;
+  const mList=getMealsList();
+  const checkedIds=state.meals.checked||[];
+  const checkedMeals=mList.filter(m=>checkedIds.includes(m.id)).length;
+  const totalProtein=mList.filter(m=>checkedIds.includes(m.id)).reduce((a,m)=>a+(m.protein||0),0);
+  const mealRatio=mList.length>0?checkedMeals/mList.length:0;
+  const proteinRatio=mList.length>0?Math.min(totalProtein/settings.proteinGoal,1):0;
+  const mealScore=mList.length>0?(mealRatio+proteinRatio)/2:0;
   const gymScore=state.workout.done?1:0;
   const stepScore=Math.min((state.steps||0)/settings.stepGoal,1);
   const filledG=(state.water.filled||[]).filter(Boolean).length;
@@ -1219,9 +1316,10 @@ function renderScore(){
   else{h.textContent='New day, new start';s.textContent='Complete your daily disciplines.';}
   if(pct===100)celebrate('🏆','Perfect Day!',"You completed every single discipline!");
   const steps=state.steps||0;
+  const mListLen=getMealsList().length;
   const pillsEl=document.getElementById('tracker-pills');
   const pillDefs=[
-    {key:'meals',done:mealScore>=0.8,icon:'🥗',val:`${checkedMeals}/${MEALS.length}`},
+    {key:'meals',done:mealScore>=0.8,icon:'🥗',val:`${checkedMeals}/${mListLen}`},
     {key:'workout',done:gymScore===1,icon:'💪',val:gymScore===1?'✓':'—'},
     {key:'steps',done:stepScore>=0.8,icon:'👟',val:steps>=1000?(steps/1000).toFixed(1)+'k':steps},
     {key:'water',done:waterScore>=1,icon:'💧',val:`${filledG}/${settings.waterGoal}`},
@@ -1240,7 +1338,7 @@ function renderDiscCards(){
   const en=settings.enabledTrackers;
   const steps=state.steps||0;
   const defs=[
-    {key:'meals',cls:'disc-card-meals',icon:'🥗',name:'Meals',val:`${checkedMeals}/${MEALS.length}`,pct:mealScore*100,fill:'fill-meals',anchor:'meals-card'},
+    {key:'meals',cls:'disc-card-meals',icon:'🥗',name:'Meals',val:`${checkedMeals}/${getMealsList().length}`,pct:mealScore*100,fill:'fill-meals',anchor:'meals-card'},
     {key:'workout',cls:'disc-card-gym',icon:'💪',name:'Gym',val:gymScore===1?'Done ✓':'Pending',pct:gymScore*100,fill:'fill-gym',anchor:'workout-card'},
     {key:'steps',cls:'disc-card-steps',icon:'👟',name:'Steps',val:steps>=1000?(steps/1000).toFixed(1)+'k':steps+'',pct:stepScore*100,fill:'fill-steps',anchor:'steps-card'},
     {key:'water',cls:'disc-card-water',icon:'💧',name:'Water',val:`${filledG}/${settings.waterGoal}`,pct:waterScore*100,fill:'fill-water',anchor:'water-card'},
@@ -1267,58 +1365,97 @@ function renderDiscCards(){
 }
 
 function renderMeals(){
+  const mList=getMealsList();
+  const checkedIds=state.meals.checked||[];
   const wrap=document.getElementById('meal-rows');
   wrap.innerHTML='';
-  MEALS.forEach(meal=>{
-    const data=state.meals[meal.id]||{checked:false,protein:''};
-    const checked=data.checked;
-    const row=document.createElement('div');
-    row.className=`meal-row${checked?' checked-row':''}`;
-    row.innerHTML=`
-      <button class="meal-check${checked?' checked':''}" data-id="${meal.id}" aria-label="Toggle ${meal.label}">
-        <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
-          <path d="M2 7L5.5 10.5L12 3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-      <span class="meal-name">${meal.emoji} ${meal.label}</span>
-      <div class="protein-input-wrap">
-        <input class="protein-input" type="number" inputmode="decimal" placeholder="0" min="0" max="999"
-               data-id="${meal.id}" value="${data.protein||''}"/>
-        <span class="protein-unit">g</span>
-      </div>`;
-    row.querySelector('.meal-check').addEventListener('click',function(){
-      if(!state.meals[meal.id])state.meals[meal.id]={checked:false,protein:''};
-      state.meals[meal.id].checked=!state.meals[meal.id].checked;
-      saveDay(todayKey(),state);
-      this.classList.add('bounce');
-      this.addEventListener('animationend',()=>this.classList.remove('bounce'),{once:true});
-      renderMeals();renderScore();renderMealsSub();updateMealsCard();renderDiscCards();
-      if(state.meals[meal.id].checked)showToast('✅',`${meal.label} logged!`);
+
+  if(mList.length===0){
+    wrap.innerHTML=`<div class="meals-empty"><div class="meals-empty-icon">🍽️</div>No meals added yet.<br>Tap + to add your first meal.</div>`;
+  } else {
+    mList.forEach(meal=>{
+      const checked=checkedIds.includes(meal.id);
+      const row=document.createElement('div');
+      row.className=`meal-row-custom${checked?' checked-row':''}`;
+      const hasCal=meal.calories!=null&&meal.calories!=='';
+      const hasPro=meal.protein!=null&&meal.protein!=='';
+      const statParts=[];
+      if(hasCal)statParts.push(`${meal.calories}cal`);
+      if(hasPro)statParts.push(`${meal.protein}g`);
+      const statPill=statParts.length?`<span class="meal-stats-pill">${statParts.join(' · ')}</span>`:'';
+      row.innerHTML=`
+        <button class="meal-check${checked?' checked':''}" data-id="${meal.id}" aria-label="Toggle ${meal.name}">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+            <path d="M2 7L5.5 10.5L12 3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span class="meal-name" style="flex:1;font-size:14px;font-weight:600">${meal.name}</span>
+        ${statPill}
+        <button class="meal-dot-btn" data-id="${meal.id}" aria-label="Options">⋮</button>`;
+      row.querySelector('.meal-check').addEventListener('click',function(){
+        const ids=state.meals.checked||[];
+        const idx=ids.indexOf(meal.id);
+        if(idx===-1)ids.push(meal.id); else ids.splice(idx,1);
+        state.meals.checked=ids;
+        saveDay(todayKey(),state);
+        this.classList.add('bounce');
+        this.addEventListener('animationend',()=>this.classList.remove('bounce'),{once:true});
+        renderMeals();renderScore();renderMealsSub();updateMealsCard();renderDiscCards();
+        if(ids.includes(meal.id))showToast('✅',`${meal.name} logged!`);
+      });
+      row.querySelector('.meal-dot-btn').addEventListener('click',function(e){
+        e.stopPropagation();
+        openMealDotMenu(meal.id,this);
+      });
+      wrap.appendChild(row);
     });
-    row.querySelector('.protein-input').addEventListener('input',function(){
-      if(!state.meals[meal.id])state.meals[meal.id]={checked:false,protein:''};
-      state.meals[meal.id].protein=this.value;
-      saveDay(todayKey(),state);
-      renderProteinBar();renderScore();renderDiscCards();
-    });
-    wrap.appendChild(row);
-  });
-  renderProteinBar();
+  }
+
+  // Footer: totals + protein bar
+  const footer=document.getElementById('meals-footer');
+  footer.innerHTML='';
+  const checkedMeals=mList.filter(m=>checkedIds.includes(m.id));
+  const totalCal=checkedMeals.reduce((a,m)=>a+(m.calories||0),0);
+  const totalPro=checkedMeals.reduce((a,m)=>a+(m.protein||0),0);
+  const anyCalData=mList.some(m=>m.calories!=null&&m.calories!=='');
+  const anyProData=mList.some(m=>m.protein!=null&&m.protein!=='');
+  if(checkedMeals.length>0&&(anyCalData||anyProData)){
+    const parts=[];
+    if(anyCalData)parts.push(`${totalCal} cal`);
+    if(anyProData)parts.push(`${totalPro}g protein`);
+    footer.innerHTML=`<div class="meals-totals">
+      <span class="meals-totals-label">Eaten so far</span>
+      <span style="font-size:13px;font-weight:700">${parts.join(' · ')}</span>
+    </div>`;
+  }
+  if(anyProData){
+    const pct=Math.min((totalPro/settings.proteinGoal)*100,100);
+    footer.innerHTML+=`<div class="progress-section">
+      <div class="progress-header">
+        <span class="progress-label">Protein Goal</span>
+        <span class="progress-value">${totalPro}g <small>/ ${settings.proteinGoal}g</small></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill fill-meals" style="width:${pct}%"></div>
+      </div>
+    </div>`;
+  }
+
+  renderMealsSub();
+  updateMealsCard();
 }
 
-function renderProteinBar(){
-  const total=MEALS.reduce((s,m)=>s+(parseFloat(state.meals[m.id]?.protein)||0),0);
-  const pct=Math.min((total/settings.proteinGoal)*100,100);
-  document.getElementById('protein-bar').style.width=pct+'%';
-  document.getElementById('protein-label').innerHTML=`${Math.round(total)}g <small>/ ${settings.proteinGoal}g</small>`;
-}
 function renderMealsSub(){
-  const done=MEALS.filter(m=>state.meals[m.id]?.checked).length;
-  document.getElementById('meals-sub').textContent=`${done}/${MEALS.length}`;
+  const mList=getMealsList();
+  const checkedIds=state.meals.checked||[];
+  const done=mList.filter(m=>checkedIds.includes(m.id)).length;
+  document.getElementById('meals-sub').textContent=`${done}/${mList.length}`;
 }
 function updateMealsCard(){
-  const done=MEALS.filter(m=>state.meals[m.id]?.checked).length;
-  document.getElementById('meals-card').classList.toggle('complete',done===MEALS.length);
+  const mList=getMealsList();
+  const checkedIds=state.meals.checked||[];
+  const done=mList.filter(m=>checkedIds.includes(m.id)).length;
+  document.getElementById('meals-card').classList.toggle('complete',mList.length>0&&done===mList.length);
 }
 
 function renderWorkout(){
@@ -1512,8 +1649,10 @@ function renderHistory(){
   days.forEach(date=>{
     if(!localStorage.getItem(`discipline_${date}`))return;
     const data=getDay(`discipline_${date}`);
-    const checkedMeals=MEALS.filter(m=>data.meals?.[m.id]?.checked).length;
-    const mealPct=Math.round(checkedMeals/MEALS.length*100);
+    const mList=getMealsList();
+    const hCheckedIds=data.meals?.checked||[];
+    const checkedMeals=mList.filter(m=>hCheckedIds.includes(m.id)).length;
+    const mealPct=mList.length>0?Math.round(checkedMeals/mList.length*100):0;
     const stepPct=Math.round(Math.min((data.steps||0)/settings.stepGoal,1)*100);
     const filledG=(data.water?.filled||[]).filter(Boolean).length;
     const waterPct=Math.round(Math.min(filledG/settings.waterGoal,1)*100);
@@ -1735,6 +1874,89 @@ document.getElementById('qls-workout').addEventListener('click',()=>{
   else showToast('💪','Workout unmarked.');
 });
 
+// ── MEAL SHEET ──────────────────────────────────────────────────────
+let _editingMealId=null;
+
+function openMealSheet(meal=null){
+  _editingMealId=meal?meal.id:null;
+  document.getElementById('meal-sheet-title').textContent=meal?'Edit Meal':'Add Meal';
+  document.getElementById('meal-name-input').value=meal?meal.name:'';
+  document.getElementById('meal-cal-input').value=(meal&&meal.calories!=null&&meal.calories!=='')?meal.calories:'';
+  document.getElementById('meal-pro-input').value=(meal&&meal.protein!=null&&meal.protein!=='')?meal.protein:'';
+  document.getElementById('meal-sheet-overlay').classList.remove('hidden');
+  document.getElementById('meal-sheet').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('meal-name-input').focus(),100);
+}
+function closeMealSheet(){
+  document.getElementById('meal-sheet-overlay').classList.add('hidden');
+  document.getElementById('meal-sheet').classList.add('hidden');
+  _editingMealId=null;
+}
+function saveMealSheet(){
+  const name=document.getElementById('meal-name-input').value.trim();
+  if(!name){document.getElementById('meal-name-input').focus();return;}
+  const calRaw=document.getElementById('meal-cal-input').value.trim();
+  const proRaw=document.getElementById('meal-pro-input').value.trim();
+  const calories=calRaw!==''?parseFloat(calRaw):null;
+  const protein=proRaw!==''?parseFloat(proRaw):null;
+  const list=getMealsList();
+  if(_editingMealId){
+    const idx=list.findIndex(m=>m.id===_editingMealId);
+    if(idx!==-1)list[idx]={...list[idx],name,calories,protein};
+  } else {
+    list.push({id:generateId(),name,calories,protein});
+  }
+  saveMealsList(list);
+  closeMealSheet();
+  renderMeals();renderScore();renderMealsSub();updateMealsCard();renderDiscCards();
+  showToast('🥗',_editingMealId?`${name} updated!`:`${name} added!`);
+}
+document.getElementById('add-meal-btn').addEventListener('click',()=>openMealSheet());
+document.getElementById('meal-sheet-cancel-btn').addEventListener('click',closeMealSheet);
+document.getElementById('meal-sheet-save-btn').addEventListener('click',saveMealSheet);
+document.getElementById('meal-name-input').addEventListener('keydown',e=>{if(e.key==='Enter')saveMealSheet()});
+
+// ── MEAL 3-DOT MENU ─────────────────────────────────────────────────
+let _dotMealId=null;
+function openMealDotMenu(mealId,anchorEl){
+  _dotMealId=mealId;
+  const menu=document.getElementById('meal-dot-menu');
+  menu.classList.remove('hidden');
+  const rect=anchorEl.getBoundingClientRect();
+  const menuW=130;
+  let left=rect.right-menuW;
+  let top=rect.bottom+4;
+  if(left<8)left=8;
+  if(top+90>window.innerHeight)top=rect.top-94;
+  menu.style.left=left+'px';
+  menu.style.top=top+'px';
+}
+function closeDotMenu(){
+  document.getElementById('meal-dot-menu').classList.add('hidden');
+  _dotMealId=null;
+}
+document.addEventListener('click',e=>{
+  const menu=document.getElementById('meal-dot-menu');
+  if(!menu.classList.contains('hidden')&&!menu.contains(e.target))closeDotMenu();
+});
+document.getElementById('meal-dot-edit').addEventListener('click',()=>{
+  const meal=getMealsList().find(m=>m.id===_dotMealId);
+  closeDotMenu();
+  if(meal)openMealSheet(meal);
+});
+document.getElementById('meal-dot-delete').addEventListener('click',()=>{
+  const mealId=_dotMealId;
+  const meal=getMealsList().find(m=>m.id===mealId);
+  closeDotMenu();
+  if(!meal)return;
+  const list=getMealsList().filter(m=>m.id!==mealId);
+  saveMealsList(list);
+  state.meals.checked=(state.meals.checked||[]).filter(id=>id!==mealId);
+  saveDay(todayKey(),state);
+  renderMeals();renderScore();renderMealsSub();updateMealsCard();renderDiscCards();
+  showToast('🗑',`${meal.name} deleted.`);
+});
+
 function navigate(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -1821,8 +2043,6 @@ function renderAll(){
   renderSleep();
   renderFocus();
   renderScore();
-  renderMealsSub();
-  updateMealsCard();
   renderWeeklyWins();
   renderDiscCards();
 }
