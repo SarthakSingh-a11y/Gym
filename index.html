@@ -773,6 +773,17 @@
     .ob-result-label{font-size:13px;color:var(--muted)}
     .ob-result-val{font-size:17px;font-weight:800}
     .ob-result-note{font-size:11px;color:var(--muted);text-align:center;padding:10px 0}
+    .ob-result-input{
+      background:none;border:none;border-bottom:1.5px solid transparent;
+      color:inherit;font-size:17px;font-family:var(--font);font-weight:800;
+      width:72px;text-align:right;outline:none;padding:2px 0;
+      transition:border-bottom-color var(--tr);
+    }
+    .ob-result-input:focus{border-bottom-color:currentColor}
+    .ob-result-val-group{display:flex;align-items:center;gap:4px}
+    .ob-result-unit{font-size:15px;font-weight:700}
+    .ob-edit-hint{font-size:12px;color:var(--muted);text-align:center;padding:4px 0 8px;transition:opacity .4s}
+    .ob-edit-hint.faded{opacity:0;pointer-events:none}
     /* Body Profile in Settings */
     .bp-card{
       margin:0 16px 4px;background:var(--card);border:1px solid var(--border);
@@ -2222,12 +2233,21 @@ function obCalculate(){
   document.getElementById('ob-result-card').innerHTML=`
     <div class="ob-result-row">
       <span class="ob-result-label">🔥 Daily Calories</span>
-      <span class="ob-result-val" style="color:var(--orange)">${r.calorieGoal.toLocaleString()} kcal/day</span>
+      <div class="ob-result-val-group" style="color:var(--orange)">
+        <input class="ob-result-input" id="ob-cal-input" type="number" inputmode="numeric"
+          step="1" value="${r.calorieGoal}" oninput="obHideEditHint()"/>
+        <span class="ob-result-unit">kcal/day</span>
+      </div>
     </div>
     <div class="ob-result-row">
       <span class="ob-result-label">🥩 Protein</span>
-      <span class="ob-result-val" style="color:var(--mint)">${r.proteinGoal}g/day</span>
+      <div class="ob-result-val-group" style="color:var(--mint)">
+        <input class="ob-result-input" id="ob-pro-input" type="number" inputmode="numeric"
+          step="1" value="${r.proteinGoal}" oninput="obHideEditHint()"/>
+        <span class="ob-result-unit">g/day</span>
+      </div>
     </div>
+    <div class="ob-edit-hint" id="ob-edit-hint">✏️ Tap to customize your goals</div>
     <div class="ob-result-row">
       <span class="ob-result-label">⚡ BMR</span>
       <span class="ob-result-val">${r.bmr.toLocaleString()} kcal</span>
@@ -2241,16 +2261,25 @@ function obCalculate(){
   document.getElementById('ob-result').classList.remove('hidden');
 }
 
+function obHideEditHint(){
+  const h=document.getElementById('ob-edit-hint');
+  if(h)h.classList.add('faded');
+}
+
 function obSave(){
   const r=_obData._results||calcGoalsFromProfile(_obData);
+  const calInput=document.getElementById('ob-cal-input');
+  const proInput=document.getElementById('ob-pro-input');
+  const finalCal=(calInput&&parseInt(calInput.value)>0)?parseInt(calInput.value):r.calorieGoal;
+  const finalPro=(proInput&&parseInt(proInput.value)>0)?parseInt(proInput.value):r.proteinGoal;
   const profile={..._obData,calorieGoal:r.calorieGoal,proteinGoal:r.proteinGoal,
-    manualOverride:false,manualCalories:null,manualProtein:null};
+    manualCalories:finalCal,manualProtein:finalPro};
   delete profile._results;
   saveBodyProfile(profile);
   document.getElementById('onboarding').classList.add('hidden');
   settings=getSettings();
   renderAll();
-  showToast('🎯','Goals calculated & saved!');
+  showToast('🎯','Goals saved!');
 }
 
 function skipOnboarding(){
