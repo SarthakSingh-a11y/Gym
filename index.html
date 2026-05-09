@@ -2,14 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0B0C14" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="DisciplineOS" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
@@ -28,11 +22,9 @@
       --steps-a:#059669; --steps-b:#10B981;
 --sleep-a:#4338CA; --sleep-b:#6366F1;
       --focus-a:#E11D48; --focus-b:#F43F5E;
-      --sat:env(safe-area-inset-top,44px);
-      --sab:env(safe-area-inset-bottom,24px);
     }
-    html{height:100%;height:-webkit-fill-available;margin:0;padding:0}
-    body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;margin:0;padding:0;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);position:fixed;top:0;left:0;right:0;bottom:0;width:100%;overflow:hidden;}
+    html{margin:0;padding:0;width:100%}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;margin:0;padding:0;width:100%;}
     ::-webkit-scrollbar{width:0}
     #app{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;overflow:hidden;}
     #page-content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 16px 16px;scroll-behavior:smooth;width:100%;box-sizing:border-box;}
@@ -48,7 +40,6 @@
       border-top:1px solid var(--border);
       display:flex;align-items:center;z-index:100;
       padding:0 16px;
-      padding-bottom:env(safe-area-inset-bottom,20px);
       height:60px;
       box-sizing:content-box;
     }
