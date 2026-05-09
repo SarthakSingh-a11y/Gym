@@ -28,12 +28,14 @@
       --steps-a:#059669; --steps-b:#10B981;
 --sleep-a:#4338CA; --sleep-b:#6366F1;
       --focus-a:#E11D48; --focus-b:#F43F5E;
+      --sat:env(safe-area-inset-top,44px);
+      --sab:env(safe-area-inset-bottom,24px);
     }
     html{height:100%;min-height:100vh;min-height:-webkit-fill-available;overflow-x:hidden;margin:0;padding:0}
-    body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100%;min-height:100vh;min-height:-webkit-fill-available;display:flex;flex-direction:column;overflow-x:hidden;-webkit-font-smoothing:antialiased;margin:0;padding:0;padding-bottom:env(safe-area-inset-bottom);width:100%}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100%;min-height:100vh;min-height:-webkit-fill-available;display:flex;flex-direction:column;overflow-x:hidden;-webkit-font-smoothing:antialiased;margin:0;padding:0;padding-top:var(--sat);padding-bottom:var(--sab);width:100%}
     ::-webkit-scrollbar{width:0}
     #app{width:100%;max-width:100%;min-height:100dvh;display:flex;flex-direction:column}
-    #page-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:80px;scroll-behavior:smooth;width:100%}
+    #page-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(60px + var(--sab) + 16px);scroll-behavior:smooth;width:100%}
     .page{display:none}
     .page.active{display:block}
 
@@ -45,9 +47,9 @@
       border-top:1px solid var(--border);
       display:flex;align-items:center;z-index:100;
       padding:0 16px;
-      padding-bottom:env(safe-area-inset-bottom,8px);
-      height:60px;
-      box-sizing:content-box;
+      padding-bottom:calc(var(--sab) + 8px);
+      height:calc(60px + var(--sab));
+      box-sizing:border-box;
     }
     .nav-btn{
       flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -83,7 +85,7 @@
       background:rgba(11,12,20,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
       border-bottom:1px solid var(--border);
       padding:16px 16px 8px;
-      padding-top:env(safe-area-inset-top,16px);
+      margin-top:0;
     }
     .app-header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
     .greeting-small{display:none}
