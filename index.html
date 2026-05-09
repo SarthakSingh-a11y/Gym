@@ -22,8 +22,7 @@
       --meals-a:#FF6B35; --meals-b:#FF9500;
       --gym-a:#7C3AED;   --gym-b:#A855F7;
       --steps-a:#059669; --steps-b:#10B981;
-      --water-a:#0EA5E9; --water-b:#38BDF8;
-      --sleep-a:#4338CA; --sleep-b:#6366F1;
+--sleep-a:#4338CA; --sleep-b:#6366F1;
       --focus-a:#E11D48; --focus-b:#F43F5E;
     }
     html{height:100%}
@@ -175,8 +174,7 @@
     .disc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
     .disc-card-meals::before{background:linear-gradient(90deg,var(--meals-a),var(--meals-b))}
 .disc-card-steps::before{background:linear-gradient(90deg,var(--steps-a),var(--steps-b))}
-    .disc-card-water::before{background:linear-gradient(90deg,var(--water-a),var(--water-b))}
-    .disc-card-sleep::before{background:linear-gradient(90deg,var(--sleep-a),var(--sleep-b))}
+.disc-card-sleep::before{background:linear-gradient(90deg,var(--sleep-a),var(--sleep-b))}
     .disc-card-focus::before{background:linear-gradient(90deg,var(--focus-a),var(--focus-b))}
     .disc-card:active{transform:scale(.96)}
     .disc-card.done{border-color:rgba(0,229,195,.25)}
@@ -197,8 +195,7 @@
     }
     .si-meals{background:rgba(255,107,53,.15)}
 .si-steps{background:rgba(5,150,105,.15)}
-    .si-water{background:rgba(14,165,233,.15)}
-    .si-sleep{background:rgba(67,56,202,.15)}
+.si-sleep{background:rgba(67,56,202,.15)}
     .si-focus{background:rgba(225,29,72,.15)}
     .section-title{font-size:17px;font-weight:700}
     .section-sub{font-size:12px;color:var(--muted);margin-left:auto}
@@ -213,13 +210,11 @@
     .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;z-index:1}
     .card-meals::before{background:linear-gradient(90deg,var(--meals-a),var(--meals-b))}
 .card-steps::before{background:linear-gradient(90deg,var(--steps-a),var(--steps-b))}
-    .card-water::before{background:linear-gradient(90deg,var(--water-a),var(--water-b))}
-    .card-sleep::before{background:linear-gradient(90deg,var(--sleep-a),var(--sleep-b))}
+.card-sleep::before{background:linear-gradient(90deg,var(--sleep-a),var(--sleep-b))}
     .card-focus::before{background:linear-gradient(90deg,var(--focus-a),var(--focus-b))}
     .card-meals.complete{box-shadow:0 0 20px rgba(255,107,53,.2);border-color:rgba(255,107,53,.35)}
 .card-steps.complete{box-shadow:0 0 20px rgba(16,185,129,.2);border-color:rgba(16,185,129,.35)}
-    .card-water.complete{box-shadow:0 0 20px rgba(56,189,248,.2);border-color:rgba(56,189,248,.35)}
-    .card-sleep.complete{box-shadow:0 0 20px rgba(99,102,241,.2);border-color:rgba(99,102,241,.35)}
+.card-sleep.complete{box-shadow:0 0 20px rgba(99,102,241,.2);border-color:rgba(99,102,241,.35)}
     .card-focus.complete{box-shadow:0 0 20px rgba(244,63,94,.2);border-color:rgba(244,63,94,.35)}
 
     /* ── MEAL ROWS ── */
@@ -254,7 +249,6 @@
     .progress-track{height:7px;background:var(--border);border-radius:4px;overflow:hidden;position:relative}
     .progress-fill{height:100%;border-radius:4px;min-width:0;transition:width .55s cubic-bezier(.4,0,.2,1)}
     .fill-meals{background:linear-gradient(90deg,var(--meals-a),var(--meals-b))}
-.fill-water{background:linear-gradient(90deg,var(--water-a),var(--water-b))}
     .fill-steps{background:linear-gradient(90deg,var(--steps-a),var(--steps-b))}
     .fill-sleep{background:linear-gradient(90deg,var(--sleep-a),var(--sleep-b))}
     .fill-focus{background:linear-gradient(90deg,var(--focus-a),var(--focus-b))}
@@ -301,20 +295,6 @@
     .steps-badge.visible{opacity:1;transform:translateY(0)}
     @keyframes ring-pulse{0%{transform:scale(1) rotate(-90deg)}50%{transform:scale(1.04) rotate(-90deg)}100%{transform:scale(1) rotate(-90deg)}}
     .steps-ring-wrap.pulse svg{animation:ring-pulse .5s ease-out}
-
-    /* ── WATER ── */
-    .glasses-grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:4px 0 10px}
-    .glass-btn{
-      width:44px;height:52px;border-radius:10px;border:2px solid var(--border);
-      background:rgba(255,255,255,.03);cursor:pointer;display:flex;flex-direction:column;
-      align-items:center;justify-content:center;gap:2px;transition:all var(--tr);
-      font-size:10px;color:var(--muted);font-family:var(--font);font-weight:600;
-    }
-    .glass-btn .g-icon{font-size:20px;transition:transform var(--tr)}
-    .glass-btn.filled{border-color:var(--water-b);background:rgba(14,165,233,.12);color:var(--water-b)}
-    .glass-btn.filled .g-icon{transform:scale(1.15)}
-    .glass-btn:active{transform:scale(.9)}
-    .water-ml-note{font-size:12px;color:var(--muted);margin-top:2px;text-align:center}
 
     /* ── SLEEP ── */
     .sleep-layout{display:flex;flex-direction:column;gap:14px}
@@ -941,9 +921,6 @@
       <button class="qls-btn" id="qls-steps">
         <span class="qls-icon">👟</span><span>Steps</span>
       </button>
-      <button class="qls-btn" id="qls-water">
-        <span class="qls-icon">💧</span><span>Water</span>
-      </button>
     </div>
   </div>
 
@@ -1056,28 +1033,6 @@
           <div class="steps-input-row">
             <input class="steps-input" id="steps-input" type="number" inputmode="numeric" placeholder="Enter steps" min="0" max="99999"/>
             <button class="steps-btn" id="steps-log-btn">Log</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- WATER -->
-      <div class="section-header">
-        <div class="section-icon si-water">💧</div>
-        <span class="section-title">Water</span>
-        <span class="section-sub" id="water-sub">0 / 8 glasses</span>
-      </div>
-      <div class="card card-water" id="water-card">
-        <div class="card-inner">
-          <div class="glasses-grid" id="glasses-grid"></div>
-          <div class="water-ml-note" id="water-ml-note">0 ml consumed</div>
-          <div class="progress-section">
-            <div class="progress-header">
-              <span class="progress-label">Hydration</span>
-              <span class="progress-value" id="water-pct-label">0%</span>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill fill-water" id="water-bar" style="width:0%"></div>
-            </div>
           </div>
         </div>
       </div>
@@ -1225,11 +1180,7 @@
           <div><div class="settings-label">Step Goal</div><div class="settings-hint">Daily steps target</div></div>
           <input class="settings-input" id="setting-steps" type="number" inputmode="numeric" placeholder="10000" min="1000" max="50000"/>
         </div>
-        <div class="settings-row">
-          <div><div class="settings-label">Water Goal</div><div class="settings-hint">Glasses per day</div></div>
-          <input class="settings-input" id="setting-water" type="number" inputmode="numeric" placeholder="8" min="1" max="20"/>
-        </div>
-        <div class="settings-row">
+<div class="settings-row">
           <div><div class="settings-label">Sleep Goal</div><div class="settings-hint">Target hours of sleep</div></div>
           <input class="settings-input" id="setting-sleep" type="number" inputmode="decimal" placeholder="8" min="4" max="12" step="0.5"/>
         </div>
@@ -1347,8 +1298,8 @@ function calcGoalsFromProfile(p){
 }
 
 const DEFAULT_SETTINGS={
-  name:'Champion',calorieGoal:2000,proteinGoal:150,stepGoal:10000,waterGoal:8,sleepGoal:8,
-  enabledTrackers:{meals:true,steps:true,water:true,sleep:true,focus:true},
+  name:'Champion',calorieGoal:2000,proteinGoal:150,stepGoal:10000,sleepGoal:8,
+  enabledTrackers:{meals:true,steps:true,sleep:true,focus:true},
 };
 function getSettings(){
   const s=JSON.parse(localStorage.getItem('dos_settings')||'{}');
@@ -1366,7 +1317,7 @@ const todayKey=()=>`discipline_${new Date().toISOString().slice(0,10)}`;
 function getDay(key){
   const defaults={
     meals:{checked:[]},steps:0,
-    water:{filled:[]},sleep:{hours:0,bedtime:'',waketime:''},
+    sleep:{hours:0,bedtime:'',waketime:''},
     focus:{journal:false,noscroll:false,meditation:false,mood:0},
     date:key.replace('discipline_',''),
   };
@@ -1376,7 +1327,6 @@ function getDay(key){
   return{
     ...defaults,...p,
     meals:{checked:Array.isArray(p.meals?.checked)?p.meals.checked:[]},
-    water:p.water||defaults.water,
     sleep:{...defaults.sleep,...(p.sleep||{})},
     focus:{...defaults.focus,...(p.focus||{})},
   };
@@ -1454,8 +1404,6 @@ function computeOverallScore(d){
   const proteinRatio=mList.length>0?Math.min(totalProtein/s.proteinGoal,1):0;
   const mealScore=mList.length>0?(mealRatio+proteinRatio)/2:0;
   const stepScore=Math.min((d.steps||0)/s.stepGoal,1);
-  const filledG=(d.water?.filled||[]).filter(Boolean).length;
-  const waterScore=Math.min(filledG/s.waterGoal,1);
   const sleepH=d.sleep?.hours||0;
   const sleepScore=sleepH===0?0:sleepH>=s.sleepGoal?1:sleepH/s.sleepGoal;
   const focusDone=[d.focus?.journal,d.focus?.noscroll,d.focus?.meditation].filter(Boolean).length;
@@ -1464,7 +1412,6 @@ function computeOverallScore(d){
   const scores=[];
   if(en.meals)scores.push(mealScore);
   if(en.steps)scores.push(stepScore);
-  if(en.water)scores.push(waterScore);
   if(en.sleep)scores.push(sleepScore);
   if(en.focus)scores.push(focusScore);
   if(!scores.length)return 0;
@@ -1480,24 +1427,21 @@ function calcCurrentScores(){
   const proteinRatio=mList.length>0?Math.min(totalProtein/settings.proteinGoal,1):0;
   const mealScore=mList.length>0?(mealRatio+proteinRatio)/2:0;
   const stepScore=Math.min((state.steps||0)/settings.stepGoal,1);
-  const filledG=(state.water.filled||[]).filter(Boolean).length;
-  const waterScore=Math.min(filledG/settings.waterGoal,1);
   const sleepH=state.sleep.hours||0;
   const sleepScore=sleepH===0?0:sleepH>=settings.sleepGoal?1:sleepH/settings.sleepGoal;
   const focusDone=[state.focus.journal,state.focus.noscroll,state.focus.meditation].filter(Boolean).length;
   const focusScore=focusDone/3;
-  return{mealScore,stepScore,waterScore,sleepScore,focusScore,
-         checkedMeals,totalProtein,filledG,sleepH,focusDone};
+  return{mealScore,stepScore,sleepScore,focusScore,
+         checkedMeals,totalProtein,sleepH,focusDone};
 }
 
 function renderScore(){
-  const{mealScore,stepScore,waterScore,sleepScore,focusScore,
-        checkedMeals,totalProtein,filledG,sleepH,focusDone}=calcCurrentScores();
+  const{mealScore,stepScore,sleepScore,focusScore,
+        checkedMeals,totalProtein,sleepH,focusDone}=calcCurrentScores();
   const en=settings.enabledTrackers;
   const scores=[];
   if(en.meals)scores.push(mealScore);
   if(en.steps)scores.push(stepScore);
-  if(en.water)scores.push(waterScore);
   if(en.sleep)scores.push(sleepScore);
   if(en.focus)scores.push(focusScore);
   const pct=scores.length?Math.round((scores.reduce((a,b)=>a+b,0)/scores.length)*100):0;
@@ -1520,7 +1464,6 @@ function renderScore(){
   const pillDefs=[
     {key:'meals',done:mealScore>=0.8,icon:'🥗',val:`${checkedMeals}/${mListLen}`},
     {key:'steps',done:stepScore>=0.8,icon:'👟',val:steps>=1000?(steps/1000).toFixed(1)+'k':steps},
-    {key:'water',done:waterScore>=1,icon:'💧',val:`${filledG}/${settings.waterGoal}`},
     {key:'sleep',done:sleepScore>=1,icon:'😴',val:sleepH>0?sleepH+'h':'—'},
     {key:'focus',done:focusScore>=1,icon:'🧠',val:`${focusDone}/3`},
   ];
@@ -1531,14 +1474,13 @@ function renderScore(){
 }
 
 function renderDiscCards(){
-  const{mealScore,stepScore,waterScore,sleepScore,focusScore,
-        checkedMeals,totalProtein,filledG,sleepH,focusDone}=calcCurrentScores();
+  const{mealScore,stepScore,sleepScore,focusScore,
+        checkedMeals,totalProtein,sleepH,focusDone}=calcCurrentScores();
   const en=settings.enabledTrackers;
   const steps=state.steps||0;
   const defs=[
     {key:'meals',cls:'disc-card-meals',icon:'🥗',name:'Meals',val:`${checkedMeals}/${getMealsList().length}`,pct:mealScore*100,fill:'fill-meals',anchor:'meals-card'},
     {key:'steps',cls:'disc-card-steps',icon:'👟',name:'Steps',val:steps>=1000?(steps/1000).toFixed(1)+'k':steps+'',pct:stepScore*100,fill:'fill-steps',anchor:'steps-card'},
-    {key:'water',cls:'disc-card-water',icon:'💧',name:'Water',val:`${filledG}/${settings.waterGoal}`,pct:waterScore*100,fill:'fill-water',anchor:'water-card'},
     {key:'sleep',cls:'disc-card-sleep',icon:'😴',name:'Sleep',val:sleepH>0?sleepH+'h':'—',pct:sleepScore*100,fill:'fill-sleep',anchor:'sleep-card'},
     {key:'focus',cls:'disc-card-focus',icon:'🧠',name:'Focus',val:`${focusDone}/3`,pct:focusScore*100,fill:'fill-focus',anchor:'focus-card'},
   ].filter(d=>en[d.key]);
@@ -1692,36 +1634,6 @@ function renderSteps(){
   document.getElementById('steps-card').classList.toggle('complete',steps>=goal);
 }
 
-function renderWater(){
-  const goal=settings.waterGoal;
-  const filled=state.water.filled||[];
-  const filledN=filled.filter(Boolean).length;
-  const grid=document.getElementById('glasses-grid');
-  grid.innerHTML='';
-  for(let i=0;i<goal;i++){
-    const btn=document.createElement('button');
-    btn.className=`glass-btn${filled[i]?' filled':''}`;
-    btn.innerHTML=`<span class="g-icon">${filled[i]?'💧':'🥛'}</span><span>${i+1}</span>`;
-    btn.addEventListener('click',()=>{
-      if(!state.water.filled)state.water.filled=[];
-      while(state.water.filled.length<goal)state.water.filled.push(false);
-      state.water.filled[i]=!state.water.filled[i];
-      saveDay(todayKey(),state);
-      renderWater();renderScore();renderDiscCards();
-      if(state.water.filled[i])showToast('💧',`Glass ${i+1} logged!`);
-      if(state.water.filled.filter(Boolean).length===goal)
-        celebrate('💧','Hydration Goal!',`${goal} glasses of water today!`);
-    });
-    grid.appendChild(btn);
-  }
-  const mlPerGlass=250;
-  document.getElementById('water-ml-note').textContent=`${filledN*mlPerGlass} ml consumed`;
-  document.getElementById('water-sub').textContent=`${filledN} / ${goal} glasses`;
-  const pct=Math.min(filledN/goal*100,100);
-  document.getElementById('water-bar').style.width=pct+'%';
-  document.getElementById('water-pct-label').textContent=Math.round(pct)+'%';
-  document.getElementById('water-card').classList.toggle('complete',filledN>=goal);
-}
 
 function renderSleep(){
   const hours=state.sleep.hours||0;
@@ -1832,8 +1744,6 @@ function renderHistory(){
     const checkedMeals=mList.filter(m=>hCheckedIds.includes(m.id)).length;
     const mealPct=mList.length>0?Math.round(checkedMeals/mList.length*100):0;
     const stepPct=Math.round(Math.min((data.steps||0)/settings.stepGoal,1)*100);
-    const filledG=(data.water?.filled||[]).filter(Boolean).length;
-    const waterPct=Math.round(Math.min(filledG/settings.waterGoal,1)*100);
     const sleepH=data.sleep?.hours||0;
     const sleepPct=sleepH===0?0:Math.round(Math.min(sleepH/settings.sleepGoal,1)*100);
     const focusDone=[data.focus?.journal,data.focus?.noscroll,data.focus?.meditation].filter(Boolean).length;
@@ -1846,7 +1756,6 @@ function renderHistory(){
     const bars=[
       {icon:'🥗',pct:mealPct,val:`${mealPct}%`,cls:'fill-meals',show:settings.enabledTrackers.meals},
       {icon:'👟',pct:stepPct,val:`${(data.steps||0).toLocaleString()}`,cls:'fill-steps',show:settings.enabledTrackers.steps},
-      {icon:'💧',pct:waterPct,val:`${filledG}/${settings.waterGoal}`,cls:'fill-water',show:settings.enabledTrackers.water},
       {icon:'😴',pct:sleepPct,val:sleepH>0?`${sleepH}h`:'—',cls:'fill-sleep',show:settings.enabledTrackers.sleep},
       {icon:'🧠',pct:focusPct,val:`${focusDone}/3`,cls:'fill-focus',show:settings.enabledTrackers.focus},
     ].filter(b=>b.show);
@@ -1937,13 +1846,11 @@ function renderSettings(){
   document.getElementById('setting-name').value=settings.name||'';
   document.getElementById('setting-steps').value=settings.stepGoal||10000;
   renderBodyProfileSection();
-  document.getElementById('setting-water').value=settings.waterGoal||8;
   document.getElementById('setting-sleep').value=settings.sleepGoal||8;
   const toggleWrap=document.getElementById('tracker-toggles');
   const trackers=[
     {key:'meals',label:'Meals Tracker',emoji:'🥗'},
     {key:'steps',label:'Steps Tracker',emoji:'👟'},
-    {key:'water',label:'Water Tracker',emoji:'💧'},
     {key:'sleep',label:'Sleep Tracker',emoji:'😴'},
     {key:'focus',label:'Focus & Mindset Tracker',emoji:'🧠'},
   ];
@@ -1966,7 +1873,6 @@ document.getElementById('save-settings-btn').addEventListener('click',()=>{
   settings={
     name:document.getElementById('setting-name').value.trim()||'Champion',
     stepGoal:parseInt(document.getElementById('setting-steps').value)||10000,
-    waterGoal:parseInt(document.getElementById('setting-water').value)||8,
     sleepGoal:parseFloat(document.getElementById('setting-sleep').value)||8,
     enabledTrackers:enabled,
   };
@@ -2015,10 +1921,7 @@ document.getElementById('qls-steps').addEventListener('click',()=>{
   toggleQuickLog(false);navigate('home');
   setTimeout(()=>document.getElementById('steps-card').scrollIntoView({behavior:'smooth',block:'start'}),100);
 });
-document.getElementById('qls-water').addEventListener('click',()=>{
-  toggleQuickLog(false);navigate('home');
-  setTimeout(()=>document.getElementById('water-card').scrollIntoView({behavior:'smooth',block:'start'}),100);
-});
+
 // ── ONBOARDING ───────────────────────────────────────────────────────
 let _obData={};
 const ACT_LABELS={sedentary:'🛋️ Sedentary',light:'🚶 Lightly Active',moderate:'🏃 Moderate',very:'💪 Very Active',athlete:'🔥 Athlete'};
@@ -2375,7 +2278,6 @@ function renderAll(){
   renderQuote();
   renderMeals();
   renderSteps();
-  renderWater();
   renderSleep();
   renderFocus();
   renderScore();
