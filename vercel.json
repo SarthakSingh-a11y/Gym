@@ -1,4 +1,11 @@
 {
+  "github": {
+    "enabled": true,
+    "autoAlias": true
+  },
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "framework": null,
   "headers": [
     {
       "source": "/sw.js",
