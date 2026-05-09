@@ -1,4 +1,4 @@
-const CACHE_NAME = 'disciplineos-v1';
+const CACHE_NAME = 'disciplineos-v' + Date.now();
 const ASSETS = [
   '/',
   '/index.html',
