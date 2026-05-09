@@ -30,7 +30,7 @@
       --focus-a:#E11D48; --focus-b:#F43F5E;
     }
     html{height:100%;min-height:100vh;min-height:-webkit-fill-available;overflow-x:hidden;margin:0;padding:0}
-    body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100%;min-height:100vh;min-height:-webkit-fill-available;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;-webkit-font-smoothing:antialiased;margin:0;padding:0;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100%;min-height:100vh;min-height:-webkit-fill-available;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;-webkit-font-smoothing:antialiased;margin:0;padding:0;padding-bottom:env(safe-area-inset-bottom)}
     ::-webkit-scrollbar{width:0}
     #app{width:100%;max-width:420px;min-height:100dvh;display:flex;flex-direction:column}
     #page-content{flex:1;overflow-y:auto;padding-bottom:96px;scroll-behavior:smooth}
@@ -80,13 +80,13 @@
       position:sticky;top:0;z-index:50;
       background:rgba(11,12,20,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
       border-bottom:1px solid var(--border);
-      padding:52px 18px 14px;
+      padding-top:env(safe-area-inset-top,12px);padding-right:18px;padding-bottom:14px;padding-left:18px;
     }
     .app-header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-    .greeting-small{font-size:11px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px}
-    #greeting-text{font-size:20px;font-weight:700;letter-spacing:-.3px;line-height:1.2}
+    .greeting-small{display:none}
+    #greeting-text{font-size:26px;font-weight:800;letter-spacing:-.5px;line-height:1.2;margin-top:10px}
     .greeting-name{background:linear-gradient(90deg,var(--mint),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    #today-date{font-size:11px;color:var(--muted);margin-top:2px}
+    #today-date{font-size:14px;color:var(--muted);margin-top:4px}
     .hero-streak-badge{
       display:inline-flex;align-items:center;gap:5px;
       padding:6px 12px;border-radius:20px;flex-shrink:0;
@@ -1135,7 +1135,6 @@
       <header class="app-header">
         <div class="app-header-row">
           <div>
-            <div class="greeting-small">Daily Tracker</div>
             <div id="greeting-text">Good morning, <span class="greeting-name">Champion</span> ☀️</div>
             <div id="today-date"></div>
           </div>
