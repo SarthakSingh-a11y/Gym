@@ -570,32 +570,31 @@
     @keyframes toast-hide{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
 
     /* ── CALORIE RING ── */
-    .meals-layout{display:flex;gap:12px;align-items:flex-start}
-    .meals-list-col{flex:1;min-width:0}
-    .cal-ring-col{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:2px;width:110px}
-    .cal-ring-wrap{position:relative;width:110px;height:110px}
+    .cal-ring-section{display:flex;flex-direction:column;align-items:center;gap:10px;padding-bottom:20px}
+    .cal-ring-wrap{position:relative;width:140px;height:140px}
     .cal-ring-wrap svg{transform:rotate(-90deg)}
-    .cal-ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:9}
+    .cal-ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:12}
     .cal-ring-fill{
-      fill:none;stroke:#FF6B35;stroke-width:9;stroke-linecap:round;
-      stroke-dasharray:302;stroke-dashoffset:302;
+      fill:none;stroke:#FF6B35;stroke-width:12;stroke-linecap:round;
+      stroke-dasharray:364;stroke-dashoffset:364;
       transition:stroke-dashoffset .4s ease,stroke .3s;
     }
-    .cal-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px}
-    .cal-ring-num{font-size:20px;font-weight:800;line-height:1.1;text-align:center;letter-spacing:-.5px}
-    .cal-ring-lbl{font-size:10px;color:var(--muted);margin-top:1px;text-align:center}
-    .cal-ring-no-data{font-size:10px;color:var(--muted);text-align:center;line-height:1.4;padding:0 4px}
-    .cal-stat-row{font-size:11px;font-weight:600;white-space:nowrap;line-height:1.7;text-align:center}
+    .cal-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .cal-ring-num{font-size:26px;font-weight:800;line-height:1;letter-spacing:-.5px;text-align:center}
+    .cal-ring-lbl{font-size:11px;color:var(--muted);margin-top:3px;text-align:center}
+    .cal-ring-no-data{font-size:11px;color:var(--muted);text-align:center;line-height:1.5}
+    .cal-ring-stats-row{display:flex;align-items:center;gap:18px;font-size:12px;font-weight:600}
+    .meals-divider{height:1px;background:var(--border);margin-bottom:4px}
 
     /* ── CUSTOM MEALS ── */
     .meal-row-custom{
-      display:flex;align-items:center;gap:10px;padding:10px 4px;
+      display:flex;align-items:center;gap:10px;padding:14px 0;min-height:52px;
       border-bottom:1px solid var(--border);border-left:3px solid transparent;
       transition:all var(--tr);
     }
     .meal-row-custom:last-child{border-bottom:none}
-    .meal-row-custom.checked-row{border-left-color:var(--meals-a);background:rgba(255,107,53,.06);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
-    .meal-row-custom.checked-row .meal-name{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(255,107,53,.4)}
+    .meal-row-custom.checked-row{border-left-color:var(--meals-a);background:rgba(255,107,53,.06);margin-left:-3px;padding-left:3px;border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+    .meal-row-custom.checked-row .meal-name{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(255,107,53,.5)}
     .meal-stats-pill{
       font-size:10px;font-weight:600;color:var(--muted);
       background:rgba(255,255,255,.06);border:1px solid var(--border);
@@ -626,8 +625,8 @@
     .meals-empty-icon{font-size:32px;margin-bottom:8px}
     .add-meal-btn{
       display:flex;align-items:center;justify-content:center;gap:6px;
-      width:100%;margin-top:12px;padding:11px;
-      background:rgba(255,107,53,.08);border:1px dashed rgba(255,107,53,.35);
+      width:100%;margin-top:10px;padding:13px;
+      background:rgba(255,107,53,.06);border:1.5px dashed rgba(255,107,53,.35);
       border-radius:var(--radius-sm);color:var(--meals-a);
       font-size:13px;font-family:var(--font);font-weight:600;
       cursor:pointer;transition:all var(--tr);
@@ -1001,25 +1000,27 @@
       </div>
       <div class="card card-meals" id="meals-card">
         <div class="card-inner">
-          <div class="meals-layout">
-            <div class="meals-list-col">
-              <div id="meal-rows"></div>
-              <button class="add-meal-btn" id="add-meal-btn">＋ Add Meal</button>
-            </div>
-            <div class="cal-ring-col">
-              <div class="cal-ring-wrap">
-                <svg viewBox="0 0 110 110" width="110" height="110">
-                  <circle class="cal-ring-bg" cx="55" cy="55" r="48"/>
-                  <circle class="cal-ring-fill" id="cal-ring-fill" cx="55" cy="55" r="48"/>
-                </svg>
-                <div class="cal-ring-center">
-                  <div class="cal-ring-num" id="cal-ring-num">—</div>
-                  <div class="cal-ring-lbl" id="cal-ring-lbl"></div>
-                </div>
+          <!-- 1. Calorie ring -->
+          <div class="cal-ring-section">
+            <div class="cal-ring-wrap">
+              <svg viewBox="0 0 140 140" width="140" height="140">
+                <circle class="cal-ring-bg" cx="70" cy="70" r="58"/>
+                <circle class="cal-ring-fill" id="cal-ring-fill" cx="70" cy="70" r="58"/>
+              </svg>
+              <div class="cal-ring-center">
+                <div class="cal-ring-num" id="cal-ring-num">—</div>
+                <div class="cal-ring-lbl" id="cal-ring-lbl"></div>
               </div>
-              <div id="cal-ring-stats"></div>
             </div>
+            <div id="cal-ring-stats"></div>
           </div>
+          <!-- 2. Divider -->
+          <div class="meals-divider"></div>
+          <!-- 3. Meal list -->
+          <div id="meal-rows"></div>
+          <!-- 4. Add meal button -->
+          <button class="add-meal-btn" id="add-meal-btn">＋ Add Meal</button>
+          <!-- 5. Protein bar -->
           <div id="meals-footer"></div>
         </div>
       </div>
@@ -1615,7 +1616,7 @@ function renderMeals(){
   const anyCalData=mList.some(m=>m.calories!=null&&m.calories!=='');
   const anyProData=mList.some(m=>m.protein!=null&&m.protein!=='');
   const calPct=anyCalData?Math.min(totalCal/calGoal,1):0;
-  const circ302=302;
+  const circ302=364;
   const ringEl=document.getElementById('cal-ring-fill');
   const overGoal=totalCal>calGoal;
   if(ringEl){
@@ -1632,11 +1633,12 @@ function renderMeals(){
   if(lblEl)lblEl.textContent=anyCalData?'kcal left':'';
   if(statsEl){
     if(anyCalData){
-      statsEl.innerHTML=`
-        <div class="cal-stat-row" style="color:#FF6B35">🔥 ${totalCal.toLocaleString()} kcal</div>
-        <div class="cal-stat-row" style="color:var(--muted)">🎯 ${calGoal.toLocaleString()} goal</div>`;
+      statsEl.innerHTML=`<div class="cal-ring-stats-row">
+        <span style="color:#FF6B35">🔥 ${totalCal.toLocaleString()} eaten</span>
+        <span style="color:var(--muted)">🎯 ${calGoal.toLocaleString()} goal</span>
+      </div>`;
     } else {
-      statsEl.innerHTML=`<div class="cal-ring-no-data">Add calories<br>to meals to track</div>`;
+      statsEl.innerHTML=`<div class="cal-ring-no-data">Add calories to meals to track</div>`;
     }
   }
 
