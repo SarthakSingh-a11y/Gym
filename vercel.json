@@ -2,6 +2,7 @@
   "outputDirectory": ".",
   "framework": null,
   "buildCommand": null,
+  "cleanUrls": true,
   "github": {
     "enabled": true,
     "autoAlias": true
