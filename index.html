@@ -26,15 +26,14 @@
     html{margin:0;padding:0;width:100%;overflow-x:hidden}
     body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;margin:0;padding:0;width:100%;overflow-x:hidden;}
     ::-webkit-scrollbar{width:0}
-    #app{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;overflow:hidden;}
-    #page-content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:14px;scroll-behavior:smooth;width:100%;box-sizing:border-box;}
+    #app{display:block;width:100%;}
+    #page-content{display:block;padding:14px;width:100%;box-sizing:border-box;}
     .page{display:none}
     .page.active{display:block}
 
     /* ── BOTTOM NAV ── */
     #bottom-nav{
-      flex-shrink:0;
-      position:sticky;bottom:0;
+      position:fixed;bottom:0;left:0;right:0;
       width:100%;
       background:rgba(19,20,31,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
       border-top:1px solid var(--border);
@@ -73,9 +72,7 @@
 
     /* ── APP HEADER ── */
     .app-header{
-      flex-shrink:0;
-      position:sticky;top:0;z-index:50;width:100%;box-sizing:border-box;
-      background:rgba(11,12,20,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      width:100%;box-sizing:border-box;
       border-bottom:1px solid var(--border);
       padding:10px 16px;
     }
@@ -892,7 +889,7 @@
     .empty-state{text-align:center;padding:48px 24px;color:var(--muted)}
     .empty-state .empty-icon{font-size:40px;margin-bottom:12px}
     .empty-state p{font-size:14px;line-height:1.6}
-    .page-bottom-pad{height:8px}
+    .page-bottom-pad{height:80px}
   </style>
 </head>
 <body>

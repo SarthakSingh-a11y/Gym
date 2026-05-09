@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'disciplineos-v14';
+﻿const CACHE_NAME = 'disciplineos-v15';
 const ASSETS = [
   '/',
   '/index.html',
