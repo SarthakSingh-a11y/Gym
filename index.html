@@ -334,6 +334,16 @@
     .focus-check.checked svg{opacity:1}
     .focus-label{flex:1;font-size:13px;font-weight:500}
     .focus-emoji{font-size:18px}
+    .focus-dot-btn{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0;transition:color var(--tr)}
+    .focus-dot-btn:hover{color:var(--text)}
+    .focus-empty{font-size:13px;color:var(--muted);text-align:center;padding:18px 0 8px;opacity:.7}
+    .add-focus-task-btn{
+      display:block;width:100%;margin-top:10px;padding:11px;
+      background:none;border:1.5px dashed var(--border);border-radius:var(--radius-sm);
+      color:var(--focus-a);font-size:13px;font-weight:600;font-family:var(--font);
+      cursor:pointer;transition:all var(--tr);letter-spacing:.2px;
+    }
+    .add-focus-task-btn:hover{border-color:var(--focus-a);background:rgba(225,29,72,.06)}
     .mood-section{margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
     .mood-label{font-size:12px;color:var(--muted);margin-bottom:10px}
     .mood-row{display:flex;gap:8px;justify-content:center}
@@ -912,6 +922,25 @@
     <button class="meal-dot-item danger" id="meal-dot-delete">🗑  Delete</button>
   </div>
 
+  <!-- FOCUS TASK ADD SHEET -->
+  <div id="focus-task-overlay" class="ql-overlay hidden" onclick="closeFocusSheet()"></div>
+  <div id="focus-task-sheet" class="quick-log-sheet hidden">
+    <div class="qls-handle"></div>
+    <div class="qls-title">Add Focus Task</div>
+    <div class="meal-sheet-fields">
+      <input type="text" id="focus-task-input" class="meal-sheet-input" placeholder="Task name…" maxlength="80"/>
+    </div>
+    <div class="meal-sheet-actions">
+      <button class="meal-sheet-cancel" id="focus-task-cancel-btn">Cancel</button>
+      <button class="meal-sheet-save" id="focus-task-save-btn">Save</button>
+    </div>
+  </div>
+
+  <!-- FOCUS DOT MENU -->
+  <div id="focus-dot-menu" class="meal-dot-menu hidden" style="position:fixed;z-index:500">
+    <button class="meal-dot-item danger" id="focus-dot-delete">🗑  Delete</button>
+  </div>
+
   <!-- QUICK LOG SHEET -->
   <div id="ql-overlay" class="ql-overlay hidden" onclick="toggleQuickLog(false)"></div>
   <div id="quick-log-sheet" class="quick-log-sheet hidden">
@@ -1235,11 +1264,8 @@ function generateId(){return Date.now().toString(36)+Math.random().toString(36).
 function getMealsList(){return JSON.parse(localStorage.getItem('meals_list')||'[]')}
 function saveMealsList(list){localStorage.setItem('meals_list',JSON.stringify(list))}
 
-const FOCUS_ITEMS=[
-  {id:'journal',label:'Morning journaling / intention set',emoji:'✍️'},
-  {id:'noscroll',label:'No doom-scrolling before 10am',emoji:'📵'},
-  {id:'meditation',label:'Meditation or breathwork (5+ min)',emoji:'🧘'},
-];
+function getFocusTasks(){return JSON.parse(localStorage.getItem('focus_tasks')||'[]')}
+function saveFocusTasks(list){localStorage.setItem('focus_tasks',JSON.stringify(list))}
 const MOODS=['😞','😐','🙂','😊','🤩'];
 const QUOTES=[
   "The only bad workout is the one that didn't happen.",
@@ -1318,7 +1344,7 @@ function getDay(key){
   const defaults={
     meals:{checked:[]},steps:0,
     sleep:{hours:0,bedtime:'',waketime:''},
-    focus:{journal:false,noscroll:false,meditation:false,mood:0},
+    focus:{checked:[],mood:0},
     date:key.replace('discipline_',''),
   };
   const stored=localStorage.getItem(key);
@@ -1328,7 +1354,7 @@ function getDay(key){
     ...defaults,...p,
     meals:{checked:Array.isArray(p.meals?.checked)?p.meals.checked:[]},
     sleep:{...defaults.sleep,...(p.sleep||{})},
-    focus:{...defaults.focus,...(p.focus||{})},
+    focus:{mood:p.focus?.mood||0,checked:Array.isArray(p.focus?.checked)?p.focus.checked:[]},
   };
 }
 function saveDay(k,d){localStorage.setItem(k,JSON.stringify(d))}
@@ -1406,8 +1432,9 @@ function computeOverallScore(d){
   const stepScore=Math.min((d.steps||0)/s.stepGoal,1);
   const sleepH=d.sleep?.hours||0;
   const sleepScore=sleepH===0?0:sleepH>=s.sleepGoal?1:sleepH/s.sleepGoal;
-  const focusDone=[d.focus?.journal,d.focus?.noscroll,d.focus?.meditation].filter(Boolean).length;
-  const focusScore=focusDone/3;
+  const fTasks=getFocusTasks();
+  const focusDone=(d.focus?.checked||[]).filter(id=>fTasks.some(t=>t.id===id)).length;
+  const focusScore=fTasks.length>0?focusDone/fTasks.length:0;
   const en=s.enabledTrackers;
   const scores=[];
   if(en.meals)scores.push(mealScore);
@@ -1429,15 +1456,18 @@ function calcCurrentScores(){
   const stepScore=Math.min((state.steps||0)/settings.stepGoal,1);
   const sleepH=state.sleep.hours||0;
   const sleepScore=sleepH===0?0:sleepH>=settings.sleepGoal?1:sleepH/settings.sleepGoal;
-  const focusDone=[state.focus.journal,state.focus.noscroll,state.focus.meditation].filter(Boolean).length;
-  const focusScore=focusDone/3;
+  const fTasks=getFocusTasks();
+  const focusChecked=state.focus.checked||[];
+  const focusDone=focusChecked.filter(id=>fTasks.some(t=>t.id===id)).length;
+  const focusTotal=fTasks.length;
+  const focusScore=focusTotal>0?focusDone/focusTotal:0;
   return{mealScore,stepScore,sleepScore,focusScore,
-         checkedMeals,totalProtein,sleepH,focusDone};
+         checkedMeals,totalProtein,sleepH,focusDone,focusTotal};
 }
 
 function renderScore(){
   const{mealScore,stepScore,sleepScore,focusScore,
-        checkedMeals,totalProtein,sleepH,focusDone}=calcCurrentScores();
+        checkedMeals,totalProtein,sleepH,focusDone,focusTotal}=calcCurrentScores();
   const en=settings.enabledTrackers;
   const scores=[];
   if(en.meals)scores.push(mealScore);
@@ -1465,7 +1495,7 @@ function renderScore(){
     {key:'meals',done:mealScore>=0.8,icon:'🥗',val:`${checkedMeals}/${mListLen}`},
     {key:'steps',done:stepScore>=0.8,icon:'👟',val:steps>=1000?(steps/1000).toFixed(1)+'k':steps},
     {key:'sleep',done:sleepScore>=1,icon:'😴',val:sleepH>0?sleepH+'h':'—'},
-    {key:'focus',done:focusScore>=1,icon:'🧠',val:`${focusDone}/3`},
+    {key:'focus',done:focusScore>=1,icon:'🧠',val:focusTotal>0?`${focusDone}/${focusTotal}`:'—'},
   ];
   pillsEl.innerHTML=pillDefs.filter(p=>en[p.key]).map(p=>`
     <div class="t-pill ${p.done?'done':''}">
@@ -1475,14 +1505,14 @@ function renderScore(){
 
 function renderDiscCards(){
   const{mealScore,stepScore,sleepScore,focusScore,
-        checkedMeals,totalProtein,sleepH,focusDone}=calcCurrentScores();
+        checkedMeals,totalProtein,sleepH,focusDone,focusTotal}=calcCurrentScores();
   const en=settings.enabledTrackers;
   const steps=state.steps||0;
   const defs=[
     {key:'meals',cls:'disc-card-meals',icon:'🥗',name:'Meals',val:`${checkedMeals}/${getMealsList().length}`,pct:mealScore*100,fill:'fill-meals',anchor:'meals-card'},
     {key:'steps',cls:'disc-card-steps',icon:'👟',name:'Steps',val:steps>=1000?(steps/1000).toFixed(1)+'k':steps+'',pct:stepScore*100,fill:'fill-steps',anchor:'steps-card'},
     {key:'sleep',cls:'disc-card-sleep',icon:'😴',name:'Sleep',val:sleepH>0?sleepH+'h':'—',pct:sleepScore*100,fill:'fill-sleep',anchor:'sleep-card'},
-    {key:'focus',cls:'disc-card-focus',icon:'🧠',name:'Focus',val:`${focusDone}/3`,pct:focusScore*100,fill:'fill-focus',anchor:'focus-card'},
+    {key:'focus',cls:'disc-card-focus',icon:'🧠',name:'Focus',val:focusTotal>0?`${focusDone}/${focusTotal}`:'—',pct:focusScore*100,fill:'fill-focus',anchor:'focus-card'},
   ].filter(d=>en[d.key]);
   const wrap=document.getElementById('disc-cards');
   wrap.innerHTML='';
@@ -1673,36 +1703,59 @@ document.getElementById('sleep-waketime').addEventListener('change',handleSleepT
 function renderFocus(){
   const wrap=document.getElementById('focus-checks');
   wrap.innerHTML='';
-  FOCUS_ITEMS.forEach(item=>{
-    const checked=state.focus[item.id]||false;
-    const row=document.createElement('div');
-    row.className=`focus-row${checked?' checked-row':''}`;
-    row.innerHTML=`
-      <button class="focus-check${checked?' checked':''}" data-id="${item.id}">
-        <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
-          <path d="M2 7L5.5 10.5L12 3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-      <span class="focus-label">${item.label}</span>
-      <span class="focus-emoji">${item.emoji}</span>`;
-    row.querySelector('.focus-check').addEventListener('click',function(){
-      state.focus[item.id]=!state.focus[item.id];
-      saveDay(todayKey(),state);
-      this.classList.add('bounce');
-      this.addEventListener('animationend',()=>this.classList.remove('bounce'),{once:true});
-      renderFocus();renderScore();renderDiscCards();
-      const done=[state.focus.journal,state.focus.noscroll,state.focus.meditation].filter(Boolean).length;
-      document.getElementById('focus-sub').textContent=`${done}/3`;
-      if(state.focus[item.id])showToast('🧠','Focus habit checked!');
+  const tasks=getFocusTasks();
+  const checkedIds=state.focus.checked||[];
+  if(tasks.length===0){
+    const empty=document.createElement('div');
+    empty.className='focus-empty';
+    empty.textContent='No tasks yet. Tap + to add one.';
+    wrap.appendChild(empty);
+  } else {
+    tasks.forEach(task=>{
+      const isChecked=checkedIds.includes(task.id);
+      const row=document.createElement('div');
+      row.className=`focus-row${isChecked?' checked-row':''}`;
+      row.innerHTML=`
+        <button class="focus-check${isChecked?' checked':''}" data-id="${task.id}">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+            <path d="M2 7L5.5 10.5L12 3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span class="focus-label">${task.label}</span>
+        <button class="focus-dot-btn" data-id="${task.id}" aria-label="Options">⋮</button>`;
+      row.querySelector('.focus-check').addEventListener('click',function(){
+        const id=this.dataset.id;
+        const arr=state.focus.checked||[];
+        const idx=arr.indexOf(id);
+        if(idx===-1){arr.push(id);}else{arr.splice(idx,1);}
+        state.focus.checked=arr;
+        saveDay(todayKey(),state);
+        this.classList.add('bounce');
+        this.addEventListener('animationend',()=>this.classList.remove('bounce'),{once:true});
+        renderFocus();renderScore();renderDiscCards();
+        if(arr.includes(id))showToast('🧠','Focus task checked!');
+      });
+      row.querySelector('.focus-dot-btn').addEventListener('click',function(e){
+        e.stopPropagation();
+        openFocusDotMenu(task.id,this);
+      });
+      wrap.appendChild(row);
     });
-    wrap.appendChild(row);
-  });
-  const done=[state.focus.journal,state.focus.noscroll,state.focus.meditation].filter(Boolean).length;
-  document.getElementById('focus-sub').textContent=`${done}/3`;
+  }
+  // Add Task button
+  const addBtn=document.createElement('button');
+  addBtn.className='add-focus-task-btn';
+  addBtn.textContent='+ Add Task';
+  addBtn.addEventListener('click',openFocusSheet);
+  wrap.appendChild(addBtn);
+  // update counter
+  const done=checkedIds.filter(id=>tasks.some(t=>t.id===id)).length;
+  const total=tasks.length;
+  document.getElementById('focus-sub').textContent=total>0?`${done}/${total}`:'0/0';
   document.querySelectorAll('.mood-btn').forEach(btn=>{
     btn.classList.toggle('selected',parseInt(btn.dataset.mood)===state.focus.mood);
   });
-  document.getElementById('focus-card').classList.toggle('complete',done===3);
+  document.getElementById('focus-card').classList.toggle('complete',total>0&&done===total);
 }
 
 document.querySelectorAll('.mood-btn').forEach(btn=>{
@@ -1746,8 +1799,9 @@ function renderHistory(){
     const stepPct=Math.round(Math.min((data.steps||0)/settings.stepGoal,1)*100);
     const sleepH=data.sleep?.hours||0;
     const sleepPct=sleepH===0?0:Math.round(Math.min(sleepH/settings.sleepGoal,1)*100);
-    const focusDone=[data.focus?.journal,data.focus?.noscroll,data.focus?.meditation].filter(Boolean).length;
-    const focusPct=Math.round(focusDone/3*100);
+    const _fTasks=getFocusTasks();
+    const focusDone=(data.focus?.checked||[]).filter(id=>_fTasks.some(t=>t.id===id)).length;
+    const focusPct=_fTasks.length>0?Math.round(focusDone/_fTasks.length*100):0;
     const overall=computeOverallScore(data);
     const scoreCls=overall>=80?'green':overall>=50?'yellow':'red';
     const d=new Date(date+'T12:00:00');
@@ -1757,7 +1811,7 @@ function renderHistory(){
       {icon:'🥗',pct:mealPct,val:`${mealPct}%`,cls:'fill-meals',show:settings.enabledTrackers.meals},
       {icon:'👟',pct:stepPct,val:`${(data.steps||0).toLocaleString()}`,cls:'fill-steps',show:settings.enabledTrackers.steps},
       {icon:'😴',pct:sleepPct,val:sleepH>0?`${sleepH}h`:'—',cls:'fill-sleep',show:settings.enabledTrackers.sleep},
-      {icon:'🧠',pct:focusPct,val:`${focusDone}/3`,cls:'fill-focus',show:settings.enabledTrackers.focus},
+      {icon:'🧠',pct:focusPct,val:_fTasks.length>0?`${focusDone}/${_fTasks.length}`:'—',cls:'fill-focus',show:settings.enabledTrackers.focus},
     ].filter(b=>b.show);
     const el=document.createElement('div');
     el.className='history-day';
@@ -2288,6 +2342,68 @@ function renderAll(){
 renderAll();
 initObPillGroups();
 checkOnboarding();
+
+// ── FOCUS TASK SHEET ──
+function openFocusSheet(){
+  document.getElementById('focus-task-overlay').classList.remove('hidden');
+  document.getElementById('focus-task-sheet').classList.remove('hidden');
+  const inp=document.getElementById('focus-task-input');
+  inp.value='';
+  setTimeout(()=>inp.focus(),100);
+}
+function closeFocusSheet(){
+  document.getElementById('focus-task-overlay').classList.add('hidden');
+  document.getElementById('focus-task-sheet').classList.add('hidden');
+}
+function saveFocusTask(){
+  const inp=document.getElementById('focus-task-input');
+  const label=inp.value.trim();
+  if(!label)return;
+  const tasks=getFocusTasks();
+  tasks.push({id:generateId(),label});
+  saveFocusTasks(tasks);
+  closeFocusSheet();
+  renderFocus();renderScore();renderDiscCards();
+  showToast('🧠','Task added!');
+}
+document.getElementById('focus-task-save-btn').addEventListener('click',saveFocusTask);
+document.getElementById('focus-task-cancel-btn').addEventListener('click',closeFocusSheet);
+document.getElementById('focus-task-input').addEventListener('keydown',function(e){
+  if(e.key==='Enter'){e.preventDefault();saveFocusTask();}
+});
+
+// ── FOCUS DOT MENU ──
+let _focusDotId=null;
+function openFocusDotMenu(id,anchor){
+  _focusDotId=id;
+  const menu=document.getElementById('focus-dot-menu');
+  menu.classList.remove('hidden');
+  const rect=anchor.getBoundingClientRect();
+  const appRect=document.getElementById('app').getBoundingClientRect();
+  menu.style.top=(rect.bottom-appRect.top+4)+'px';
+  menu.style.right=(appRect.right-rect.right)+'px';
+}
+function closeFocusDotMenu(){
+  document.getElementById('focus-dot-menu').classList.add('hidden');
+  _focusDotId=null;
+}
+document.getElementById('focus-dot-delete').addEventListener('click',function(){
+  if(!_focusDotId)return;
+  const tasks=getFocusTasks().filter(t=>t.id!==_focusDotId);
+  saveFocusTasks(tasks);
+  // remove from checked too
+  state.focus.checked=(state.focus.checked||[]).filter(id=>id!==_focusDotId);
+  saveDay(todayKey(),state);
+  closeFocusDotMenu();
+  renderFocus();renderScore();renderDiscCards();
+  showToast('🗑','Task removed');
+});
+document.addEventListener('click',function(e){
+  const menu=document.getElementById('focus-dot-menu');
+  if(!menu.classList.contains('hidden')&&!menu.contains(e.target)&&!e.target.classList.contains('focus-dot-btn')){
+    closeFocusDotMenu();
+  }
+});
 </script>
 </body>
 </html>
