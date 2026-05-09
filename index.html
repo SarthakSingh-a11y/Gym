@@ -197,6 +197,7 @@
 .si-steps{background:rgba(5,150,105,.15)}
 .si-sleep{background:rgba(67,56,202,.15)}
     .si-focus{background:rgba(225,29,72,.15)}
+    .si-gym{background:rgba(124,58,237,.15)}
     .section-title{font-size:17px;font-weight:700}
     .section-sub{font-size:12px;color:var(--muted);margin-left:auto}
 
@@ -344,6 +345,24 @@
       cursor:pointer;transition:all var(--tr);letter-spacing:.2px;
     }
     .add-focus-task-btn:hover{border-color:var(--focus-a);background:rgba(225,29,72,.06)}
+
+    /* ── GYM TAP CARD ── */
+    .gym-tap-card{
+      margin:0 16px 8px;padding:20px 22px;
+      background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);
+      display:flex;align-items:center;gap:14px;cursor:pointer;
+      transition:all var(--tr);user-select:none;-webkit-tap-highlight-color:transparent;
+    }
+    .gym-tap-card:active{transform:scale(.97)}
+    .gym-tap-card.gym-done{
+      border-color:rgba(16,185,129,.45);
+      box-shadow:0 0 22px rgba(16,185,129,.18);
+      background:rgba(16,185,129,.06);
+      cursor:default;
+    }
+    .gym-tap-icon{font-size:26px;flex-shrink:0}
+    .gym-tap-label{font-size:15px;font-weight:700;color:var(--gym-a)}
+    .gym-tap-card.gym-done .gym-tap-label{color:#10B981}
     .mood-section{margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
     .mood-label{font-size:12px;color:var(--muted);margin-bottom:10px}
     .mood-row{display:flex;gap:8px;justify-content:center}
@@ -1115,6 +1134,16 @@
         </div>
       </div>
 
+      <!-- GYM -->
+      <div class="section-header">
+        <div class="section-icon si-gym">💪</div>
+        <span class="section-title">Gym</span>
+      </div>
+      <div id="gym-toggle-card" class="gym-tap-card">
+        <span class="gym-tap-icon" id="gym-tap-icon">💪</span>
+        <span class="gym-tap-label" id="gym-tap-label">Mark Gym Done</span>
+      </div>
+
       <div class="page-bottom-pad"></div>
     </div><!-- /home -->
 
@@ -1345,6 +1374,7 @@ function getDay(key){
     meals:{checked:[]},steps:0,
     sleep:{hours:0,bedtime:'',waketime:''},
     focus:{checked:[],mood:0},
+    gymDone:false,
     date:key.replace('discipline_',''),
   };
   const stored=localStorage.getItem(key);
@@ -1424,57 +1454,30 @@ function computeOverallScore(d){
   const s=getSettings();
   const mList=getMealsList();
   const checkedIds=d.meals?.checked||[];
-  const checkedMeals=mList.filter(m=>checkedIds.includes(m.id)).length;
-  const totalProtein=mList.filter(m=>checkedIds.includes(m.id)).reduce((a,m)=>a+(m.protein||0),0);
-  const mealRatio=mList.length>0?checkedMeals/mList.length:0;
-  const proteinRatio=mList.length>0?Math.min(totalProtein/s.proteinGoal,1):0;
-  const mealScore=mList.length>0?(mealRatio+proteinRatio)/2:0;
+  const totalCal=mList.filter(m=>checkedIds.includes(m.id)).reduce((a,m)=>a+(m.calories||0),0);
+  const calScore=s.calorieGoal>0?Math.min(totalCal/s.calorieGoal,1):0;
   const stepScore=Math.min((d.steps||0)/s.stepGoal,1);
-  const sleepH=d.sleep?.hours||0;
-  const sleepScore=sleepH===0?0:sleepH>=s.sleepGoal?1:sleepH/s.sleepGoal;
-  const fTasks=getFocusTasks();
-  const focusDone=(d.focus?.checked||[]).filter(id=>fTasks.some(t=>t.id===id)).length;
-  const focusScore=fTasks.length>0?focusDone/fTasks.length:0;
-  const en=s.enabledTrackers;
-  const scores=[];
-  if(en.meals)scores.push(mealScore);
-  if(en.steps)scores.push(stepScore);
-  if(en.sleep)scores.push(sleepScore);
-  if(en.focus)scores.push(focusScore);
-  if(!scores.length)return 0;
-  return Math.round((scores.reduce((a,b)=>a+b,0)/scores.length)*100);
+  const sleepScore=(d.sleep?.hours||0)>0?1:0;
+  const gymScore=d.gymDone===true?1:0;
+  return Math.round((calScore+stepScore+sleepScore+gymScore)/4*100);
 }
 
 function calcCurrentScores(){
   const mList=getMealsList();
   const checkedIds=state.meals.checked||[];
-  const checkedMeals=mList.filter(m=>checkedIds.includes(m.id)).length;
-  const totalProtein=mList.filter(m=>checkedIds.includes(m.id)).reduce((a,m)=>a+(m.protein||0),0);
-  const mealRatio=mList.length>0?checkedMeals/mList.length:0;
-  const proteinRatio=mList.length>0?Math.min(totalProtein/settings.proteinGoal,1):0;
-  const mealScore=mList.length>0?(mealRatio+proteinRatio)/2:0;
-  const stepScore=Math.min((state.steps||0)/settings.stepGoal,1);
+  const totalCal=mList.filter(m=>checkedIds.includes(m.id)).reduce((a,m)=>a+(m.calories||0),0);
+  const calScore=settings.calorieGoal>0?Math.min(totalCal/settings.calorieGoal,1):0;
+  const steps=state.steps||0;
+  const stepScore=Math.min(steps/settings.stepGoal,1);
   const sleepH=state.sleep.hours||0;
-  const sleepScore=sleepH===0?0:sleepH>=settings.sleepGoal?1:sleepH/settings.sleepGoal;
-  const fTasks=getFocusTasks();
-  const focusChecked=state.focus.checked||[];
-  const focusDone=focusChecked.filter(id=>fTasks.some(t=>t.id===id)).length;
-  const focusTotal=fTasks.length;
-  const focusScore=focusTotal>0?focusDone/focusTotal:0;
-  return{mealScore,stepScore,sleepScore,focusScore,
-         checkedMeals,totalProtein,sleepH,focusDone,focusTotal};
+  const sleepScore=sleepH>0?1:0;
+  const gymScore=state.gymDone===true?1:0;
+  return{calScore,stepScore,sleepScore,gymScore,totalCal,steps,sleepH};
 }
 
 function renderScore(){
-  const{mealScore,stepScore,sleepScore,focusScore,
-        checkedMeals,totalProtein,sleepH,focusDone,focusTotal}=calcCurrentScores();
-  const en=settings.enabledTrackers;
-  const scores=[];
-  if(en.meals)scores.push(mealScore);
-  if(en.steps)scores.push(stepScore);
-  if(en.sleep)scores.push(sleepScore);
-  if(en.focus)scores.push(focusScore);
-  const pct=scores.length?Math.round((scores.reduce((a,b)=>a+b,0)/scores.length)*100):0;
+  const{calScore,stepScore,sleepScore,gymScore,totalCal,steps,sleepH}=calcCurrentScores();
+  const pct=Math.round((calScore+stepScore+sleepScore+gymScore)/4*100);
   document.getElementById('score-pct').textContent=pct+'%';
   const circ=251;
   const ring=document.getElementById('score-ring');
@@ -1488,28 +1491,35 @@ function renderScore(){
   else if(pct>0){h.textContent="Let's go! 🚀";s.textContent="You've started — now finish strong.";}
   else{h.textContent='New day, new start';s.textContent='Complete your daily disciplines.';}
   if(pct===100)celebrate('🏆','Perfect Day!',"You completed every single discipline!");
-  const steps=state.steps||0;
-  const mListLen=getMealsList().length;
   const pillsEl=document.getElementById('tracker-pills');
-  const pillDefs=[
-    {key:'meals',done:mealScore>=0.8,icon:'🥗',val:`${checkedMeals}/${mListLen}`},
-    {key:'steps',done:stepScore>=0.8,icon:'👟',val:steps>=1000?(steps/1000).toFixed(1)+'k':steps},
-    {key:'sleep',done:sleepScore>=1,icon:'😴',val:sleepH>0?sleepH+'h':'—'},
-    {key:'focus',done:focusScore>=1,icon:'🧠',val:focusTotal>0?`${focusDone}/${focusTotal}`:'—'},
-  ];
-  pillsEl.innerHTML=pillDefs.filter(p=>en[p.key]).map(p=>`
-    <div class="t-pill ${p.done?'done':''}">
-      <span>${p.icon}</span><span>${p.val}</span>
-    </div>`).join('');
+  pillsEl.innerHTML=`
+    <div class="t-pill ${calScore>=0.8?'done':''}"><span>🍽</span><span>${totalCal>0?totalCal.toLocaleString()+'cal':'—'}</span></div>
+    <div class="t-pill ${stepScore>=0.8?'done':''}"><span>👟</span><span>${steps>=1000?(steps/1000).toFixed(1)+'k':steps||'—'}</span></div>
+    <div class="t-pill ${sleepScore>=1?'done':''}"><span>😴</span><span>${sleepH>0?sleepH+'h':'—'}</span></div>
+    <div class="t-pill ${gymScore>=1?'done':''}"><span>💪</span><span>${gymScore>=1?'✅':'❌'}</span></div>`;
 }
 
 function renderDiscCards(){
-  const{mealScore,stepScore,sleepScore,focusScore,
-        checkedMeals,totalProtein,sleepH,focusDone,focusTotal}=calcCurrentScores();
-  const en=settings.enabledTrackers;
+  // compute each tracker's display values independently
+  const mList=getMealsList();
+  const mCheckedIds=state.meals.checked||[];
+  const checkedMeals=mList.filter(m=>mCheckedIds.includes(m.id)).length;
+  const totalProtein=mList.filter(m=>mCheckedIds.includes(m.id)).reduce((a,m)=>a+(m.protein||0),0);
+  const mealRatio=mList.length>0?checkedMeals/mList.length:0;
+  const proteinRatio=mList.length>0?Math.min(totalProtein/settings.proteinGoal,1):0;
+  const mealScore=mList.length>0?(mealRatio+proteinRatio)/2:0;
   const steps=state.steps||0;
+  const stepScore=Math.min(steps/settings.stepGoal,1);
+  const sleepH=state.sleep.hours||0;
+  const sleepScore=sleepH>0?1:0;
+  const fTasks=getFocusTasks();
+  const fChecked=state.focus.checked||[];
+  const focusDone=fChecked.filter(id=>fTasks.some(t=>t.id===id)).length;
+  const focusTotal=fTasks.length;
+  const focusScore=focusTotal>0?focusDone/focusTotal:0;
+  const en=settings.enabledTrackers;
   const defs=[
-    {key:'meals',cls:'disc-card-meals',icon:'🥗',name:'Meals',val:`${checkedMeals}/${getMealsList().length}`,pct:mealScore*100,fill:'fill-meals',anchor:'meals-card'},
+    {key:'meals',cls:'disc-card-meals',icon:'🥗',name:'Meals',val:`${checkedMeals}/${mList.length}`,pct:mealScore*100,fill:'fill-meals',anchor:'meals-card'},
     {key:'steps',cls:'disc-card-steps',icon:'👟',name:'Steps',val:steps>=1000?(steps/1000).toFixed(1)+'k':steps+'',pct:stepScore*100,fill:'fill-steps',anchor:'steps-card'},
     {key:'sleep',cls:'disc-card-sleep',icon:'😴',name:'Sleep',val:sleepH>0?sleepH+'h':'—',pct:sleepScore*100,fill:'fill-sleep',anchor:'sleep-card'},
     {key:'focus',cls:'disc-card-focus',icon:'🧠',name:'Focus',val:focusTotal>0?`${focusDone}/${focusTotal}`:'—',pct:focusScore*100,fill:'fill-focus',anchor:'focus-card'},
@@ -2326,6 +2336,24 @@ setInterval(()=>{
   }
 },60000);
 
+function renderGym(){
+  const done=state.gymDone===true;
+  const card=document.getElementById('gym-toggle-card');
+  const lbl=document.getElementById('gym-tap-label');
+  const icon=document.getElementById('gym-tap-icon');
+  card.classList.toggle('gym-done',done);
+  lbl.textContent=done?'Gym Done!':'Mark Gym Done';
+  icon.textContent=done?'✅':'💪';
+}
+function toggleGym(){
+  if(state.gymDone)return;
+  state.gymDone=true;
+  saveDay(todayKey(),state);
+  renderGym();renderScore();renderWeeklyWins();
+  showToast('💪','Gym marked done!');
+}
+document.getElementById('gym-toggle-card').addEventListener('click',toggleGym);
+
 function renderAll(){
   checkMidnightReset();
   renderGreeting();
@@ -2334,6 +2362,7 @@ function renderAll(){
   renderSteps();
   renderSleep();
   renderFocus();
+  renderGym();
   renderScore();
   renderWeeklyWins();
   renderDiscCards();
