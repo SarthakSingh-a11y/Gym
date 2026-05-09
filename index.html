@@ -39,9 +39,9 @@
       background:rgba(19,20,31,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
       border-top:1px solid var(--border);
       display:flex;align-items:center;z-index:100;
-      padding:10px 16px;
+      padding:0 16px;
       height:60px;
-      box-sizing:content-box;
+      box-sizing:border-box;
     }
     .nav-btn{
       flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -259,7 +259,7 @@
 
     /* ── STEPS ── */
     .steps-layout{display:flex;align-items:center;gap:14px;width:100%}
-    .steps-ring-wrap{position:relative;width:140px;height:140px;flex-shrink:0}
+    .steps-ring-wrap{position:relative;width:clamp(110px,34vw,140px);height:clamp(110px,34vw,140px);flex-shrink:0}
     .steps-ring-wrap svg{transform:rotate(-90deg)}
     .steps-ring-bg{fill:none;stroke:var(--border);stroke-width:10}
     .steps-ring-fill{
@@ -417,7 +417,7 @@
       content:'';position:absolute;top:0;left:0;right:0;height:3px;
       background:linear-gradient(90deg,var(--mint),var(--neon));
     }
-    .progress-ring-wrap{position:relative;width:130px;height:130px;flex-shrink:0}
+    .progress-ring-wrap{position:relative;width:clamp(100px,30vw,130px);height:clamp(100px,30vw,130px);flex-shrink:0}
     .progress-ring-wrap svg{transform:rotate(-90deg)}
     .prog-ring-bg{fill:none;stroke:var(--border);stroke-width:10}
     .prog-ring-fill{
@@ -581,7 +581,7 @@
 
     /* ── CALORIE RING ── */
     .cal-ring-section{display:flex;flex-direction:column;align-items:center;gap:10px;padding-bottom:20px}
-    .cal-ring-wrap{position:relative;width:140px;height:140px}
+    .cal-ring-wrap{position:relative;width:clamp(120px,36vw,160px);height:clamp(120px,36vw,160px)}
     .cal-ring-wrap svg{transform:rotate(-90deg)}
     .cal-ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:12}
     .cal-ring-fill{
@@ -753,7 +753,7 @@
     .ob-edit-hint.faded{opacity:0;pointer-events:none}
     /* Body Profile in Settings */
     .bp-card{
-      margin:0 16px 4px;background:var(--card);border:1px solid var(--border);
+      margin:0 0 10px;background:var(--card);border:1px solid var(--border);
       border-radius:var(--radius);padding:16px;position:relative;overflow:hidden;
     }
     .bp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--mint),var(--blue))}
@@ -877,7 +877,7 @@
       cursor:pointer;font-size:14px;font-family:var(--font);padding:0;
     }
     .logout-btn{
-      display:block;width:calc(100% - 32px);margin:8px 16px 0;
+      display:block;width:100%;margin:8px 0 0;
       padding:14px;background:none;
       border:1.5px solid rgba(244,63,94,.4);border-radius:var(--radius-sm);
       color:#F43F5E;font-size:14px;font-family:var(--font);font-weight:700;
@@ -1148,7 +1148,7 @@
 
       <div class="hero-card">
         <div class="hero-ring-wrap">
-          <svg viewBox="0 0 96 96" width="96" height="96">
+          <svg viewBox="0 0 96 96" width="100%" height="100%">
             <circle class="score-ring-bg" cx="48" cy="48" r="40"/>
             <circle class="score-ring-fill" id="score-ring" cx="48" cy="48" r="40"/>
           </svg>
@@ -1180,7 +1180,7 @@
           <!-- 1. Calorie ring -->
           <div class="cal-ring-section">
             <div class="cal-ring-wrap">
-              <svg viewBox="0 0 140 140" width="140" height="140">
+              <svg viewBox="0 0 140 140" width="100%" height="100%">
                 <circle class="cal-ring-bg" cx="70" cy="70" r="58"/>
                 <circle class="cal-ring-fill" id="cal-ring-fill" cx="70" cy="70" r="58"/>
               </svg>
@@ -1222,7 +1222,7 @@
         <div class="card-inner">
           <div class="steps-layout">
             <div class="steps-ring-wrap" id="steps-ring-wrap">
-              <svg viewBox="0 0 140 140" width="140" height="140">
+              <svg viewBox="0 0 140 140" width="100%" height="100%">
                 <circle class="steps-ring-bg" cx="70" cy="70" r="55"/>
                 <circle class="steps-ring-fill" id="steps-ring" cx="70" cy="70" r="55"/>
               </svg>
@@ -1321,7 +1321,7 @@
       </div>
       <div class="progress-hero">
         <div class="progress-ring-wrap">
-          <svg viewBox="0 0 130 130" width="130" height="130">
+          <svg viewBox="0 0 130 130" width="100%" height="100%">
             <circle class="prog-ring-bg" cx="65" cy="65" r="55"/>
             <circle class="prog-ring-fill" id="progress-ring" cx="65" cy="65" r="55"/>
           </svg>
