@@ -358,7 +358,6 @@
       border-color:rgba(16,185,129,.45);
       box-shadow:0 0 22px rgba(16,185,129,.18);
       background:rgba(16,185,129,.06);
-      cursor:default;
     }
     .gym-tap-icon{font-size:26px;flex-shrink:0}
     .gym-tap-label{font-size:15px;font-weight:700;color:var(--gym-a)}
@@ -1202,6 +1201,16 @@
         </div>
       </div>
 
+      <!-- GYM -->
+      <div class="section-header">
+        <div class="section-icon si-gym">💪</div>
+        <span class="section-title">Gym</span>
+      </div>
+      <div id="gym-toggle-card" class="gym-tap-card">
+        <span class="gym-tap-icon" id="gym-tap-icon">💪</span>
+        <span class="gym-tap-label" id="gym-tap-label">Mark Gym Done</span>
+      </div>
+
       <!-- STEPS -->
       <div class="section-header">
         <div class="section-icon si-steps">👟</div>
@@ -1284,16 +1293,6 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- GYM -->
-      <div class="section-header">
-        <div class="section-icon si-gym">💪</div>
-        <span class="section-title">Gym</span>
-      </div>
-      <div id="gym-toggle-card" class="gym-tap-card">
-        <span class="gym-tap-icon" id="gym-tap-icon">💪</span>
-        <span class="gym-tap-label" id="gym-tap-label">Mark Gym Done</span>
       </div>
 
       <div class="page-bottom-pad"></div>
@@ -2504,11 +2503,10 @@ function renderGym(){
   icon.textContent=done?'✅':'💪';
 }
 function toggleGym(){
-  if(state.gymDone)return;
-  state.gymDone=true;
+  state.gymDone=!state.gymDone;
   saveDay(todayKey(),state);
   renderGym();renderScore();renderWeeklyWins();
-  showToast('💪','Gym marked done!');
+  if(state.gymDone)showToast('💪','Gym marked done!');
 }
 document.getElementById('gym-toggle-card').addEventListener('click',toggleGym);
 
