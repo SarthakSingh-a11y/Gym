@@ -12,7 +12,7 @@
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
       --bg:#0B0C14; --card:#13141F; --card2:#1A1B2A; --border:#1E2030;
-      --text:#F1F5F9; --muted:#64748B; --radius:18px; --radius-sm:12px;
+      --text:#F1F5F9; --muted:#64748B; --radius:16px; --radius-sm:12px;
       --font:'Inter',system-ui,-apple-system,sans-serif;
       --tr:0.22s cubic-bezier(.4,0,.2,1); --shadow:0 4px 24px rgba(0,0,0,.6);
       --mint:#00E5C3; --purple:#8B5CF6; --neon:#C8FF00;
@@ -27,7 +27,7 @@
     body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;margin:0;padding:0;width:100%;}
     ::-webkit-scrollbar{width:0}
     #app{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;overflow:hidden;}
-    #page-content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 16px 16px;scroll-behavior:smooth;width:100%;box-sizing:border-box;}
+    #page-content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:14px;scroll-behavior:smooth;width:100%;box-sizing:border-box;}
     .page{display:none}
     .page.active{display:block}
 
@@ -39,7 +39,7 @@
       background:rgba(19,20,31,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
       border-top:1px solid var(--border);
       display:flex;align-items:center;z-index:100;
-      padding:0 16px;
+      padding:10px 16px;
       height:60px;
       box-sizing:content-box;
     }
@@ -77,11 +77,11 @@
       position:sticky;top:0;z-index:50;width:100%;box-sizing:border-box;
       background:rgba(11,12,20,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
       border-bottom:1px solid var(--border);
-      padding:16px 16px 8px;
+      padding:10px 16px;
     }
     .app-header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
     .greeting-small{display:none}
-    #greeting-text{font-size:22px;font-weight:800;letter-spacing:-.4px;line-height:1.2;margin-top:8px;text-align:left}
+    #greeting-text{font-size:26px;font-weight:800;letter-spacing:-.4px;line-height:1.2;margin-top:8px;text-align:left}
     .greeting-name{background:linear-gradient(90deg,var(--mint),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
     #today-date{font-size:14px;color:var(--muted);margin-top:4px;text-align:left}
     .hero-streak-badge{
@@ -92,7 +92,7 @@
     }
 
     /* ── WEEK STRIP ── */
-    .week-strip-wrap{padding:12px 16px 6px;overflow-x:auto;scrollbar-width:none}
+    .week-strip-wrap{padding:12px 0 6px;margin:0 -14px;padding-left:14px;padding-right:14px;overflow-x:auto;scrollbar-width:none}
     .week-strip-wrap::-webkit-scrollbar{display:none}
     #week-dots{display:flex;gap:8px}
     .week-dot{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0}
@@ -110,7 +110,7 @@
 
     /* ── HERO CARD ── */
     .hero-card{
-      margin:14px 16px 0;
+      margin:0 0 10px;
       background:var(--card);border-radius:var(--radius);border:1px solid var(--border);
       padding:20px;display:flex;align-items:center;gap:20px;
       position:relative;overflow:hidden;
@@ -149,7 +149,7 @@
 
     /* ── DAILY QUOTE ── */
     .daily-quote{
-      margin:14px 16px 0;padding:12px 14px;
+      margin:0 0 10px;padding:12px 14px;
       background:var(--card);border-radius:var(--radius-sm);
       border-left:3px solid var(--mint);
       font-size:12px;color:var(--muted);line-height:1.55;font-style:italic;
@@ -157,11 +157,11 @@
 
     /* ── DISC CARDS (horizontal scroll summary) ── */
     .disc-section-label{
-      padding:0;margin:16px 16px 8px;
+      padding:0;margin:14px 0 8px;
       font-size:12px;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);
     }
     .disc-cards-scroll{
-      display:flex;gap:10px;padding:0 16px 4px;
+      display:flex;gap:10px;padding:0 0 4px;margin:0 -14px;padding-left:14px;padding-right:14px;
       overflow-x:auto;scrollbar-width:none;
     }
     .disc-cards-scroll::-webkit-scrollbar{display:none}
@@ -188,7 +188,7 @@
     /* ── SECTION HEADER ── */
     .section-header{
       display:flex;align-items:center;gap:10px;
-      margin:16px 16px 8px;padding:0;
+      margin:14px 0 8px;padding:0;
     }
     .section-icon{
       width:34px;height:34px;border-radius:var(--radius-sm);
@@ -199,17 +199,17 @@
 .si-sleep{background:rgba(67,56,202,.15)}
     .si-focus{background:rgba(225,29,72,.15)}
     .si-gym{background:rgba(124,58,237,.15)}
-    .section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px}
+    .section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px}
     .section-sub{font-size:12px;color:var(--muted);margin-left:auto}
 
     /* ── CARD BASE ── */
     .card{
-      background:var(--card);border-radius:14px;border:1px solid var(--border);
-      margin:0 16px 12px;position:relative;overflow:hidden;
+      background:var(--card);border-radius:16px;border:1px solid var(--border);
+      margin:0 0 10px;position:relative;overflow:hidden;
       transition:border-color var(--tr),box-shadow var(--tr);
       box-sizing:border-box;
     }
-    .card-inner{padding:14px 16px}
+    .card-inner{padding:14px}
     .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;z-index:1}
     .card-meals::before{background:linear-gradient(90deg,var(--meals-a),var(--meals-b))}
 .card-steps::before{background:linear-gradient(90deg,var(--steps-a),var(--steps-b))}
